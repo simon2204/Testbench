@@ -13,11 +13,11 @@ extension Process {
     /// - Parameter deadline: The latest time by which the receiver should have completed the task.
     /// - Returns: True if the deadline has passed, false otherwise.
     func waitUntilExit(deadline: DispatchTime) -> Bool {
-        var hasDeadlinePassed = false
+        var deadlineHasPassed = false
         
         let terminationTask = DispatchWorkItem {
             self.terminate()
-            hasDeadlinePassed = true
+            deadlineHasPassed = true
         }
         
         DispatchQueue.main.asyncAfter(deadline: deadline, execute: terminationTask)
@@ -26,6 +26,6 @@ extension Process {
         
         terminationTask.cancel()
         
-        return hasDeadlinePassed
+        return deadlineHasPassed
     }
 }

@@ -11,6 +11,18 @@ struct Testbench: ParsableCommand {
         guard let testbenchConfig = constructTestbenchConfiguration() else { return }
         print(testbenchConfig)
         Bundle.module.url(forResource: "config", withExtension: "json")
+        
+        let process = Process()
+        process.launchPath = "/usr/bin/env"
+        process.arguments = ["sudo", "-u", "simon"]
+              
+        process.launch()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(200)) {
+            process.terminate()
+        }
+        
+        process.waitUntilExit()
     }
     
     func constructTestbenchConfiguration() -> TestbenchConfiguration? {

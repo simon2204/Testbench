@@ -14,10 +14,11 @@ struct CCompiler {
     let options: BuildOptions
     
     func build() throws -> TimeInterval  {
+        let compilerURL = URL(fileURLWithPath: compiler.rawValue)
+        
         let cFilePaths = CFileManager.cFiles(at: source).map(\.path)
         let outputOption = "-o \(destination.path)"
         let compilerArguments = cFilePaths + options.arguments + [outputOption]
-        let compilerURL = URL(fileURLWithPath: compiler.rawValue)
         
         let secondsNeeded = try CCompiler.measureExecutionTime {
             let task = try Process.run(compilerURL, arguments: compilerArguments)
@@ -27,11 +28,14 @@ struct CCompiler {
         return secondsNeeded
     }
     
-    func run() throws -> TimeInterval {
-        // TODO: Interrupt task after a specific amout of time.
+    func run(withDeadline deadline: DispatchTimeInterval) throws -> TimeInterval {
+        let testExecutable = destination.appendingPathComponent("test_executable")
+        
         let secondsNeeded = try CCompiler.measureExecutionTime {
-            let task = try Process.run(destination, arguments: [])
-            task.waitUntilExit()
+            // TODO: Arguments
+            let task = try Process.run(testExecutable, arguments: [])
+            let deadlineHasPassed = task.waitUntilExit(deadline: .now() + deadline)
+            if deadlineHasPassed { throw CompileError.runTimeExceeded(seconds: deadline.seconds) }
         }
         
         return secondsNeeded
@@ -77,5 +81,21 @@ extension CCompiler {
         let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds
         let timeInterval = Double(nanoTime) / 1_000_000_000
         return timeInterval
+    }
+}
+
+extension CCompiler {
+    enum CompileError: LocalizedError {
+        case buildTimeExceeded(seconds: TimeInterval)
+        case runTimeExceeded(seconds: TimeInterval)
+        
+        var errorDescription: String? {
+            switch self {
+            case .buildTimeExceeded(seconds: let seconds):
+                return "Build time of \(seconds) seconds has been exceeded"
+            case .runTimeExceeded(seconds: let seconds):
+                return "Run time of \(seconds) seconds has been exceeded"
+            }
+        }
     }
 }

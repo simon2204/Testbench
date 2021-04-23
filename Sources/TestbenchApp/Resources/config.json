@@ -1,0 +1,22 @@
+{
+    "__comment": "THIS IS A SAMPLE CONFIGURATION. RENAME THIS FILE TO config.json.",
+    "workingDirectory": "working_directory",
+    "testSpecificationDirectory": "test_specification",
+    "moodleUsername": "*******",
+    "moodlePassword": "*******",
+    "moodleURL": "https://moodle.w-hs.de",
+    "adminEmails": [ "test@w-hs.de" ],
+    "smtpConfiguration": {
+        "serverURL": "smtp.w-hs.de",
+        "port": 587,
+        "username": "********",
+        "password": "********",
+        "senderEmail": "testbench@w-hs.de"
+    },
+    "allowedCorsURLs": [
+        "http://localhost:8080",
+        "http://localhost:3000"
+    ],
+    "testUser": "****",
+    "disableMoodleUpload": false
+}

@@ -1,7 +1,7 @@
 import XCTest
 
-import TestbenchTests
+import TestbenchLibTests
 
 var tests = [XCTestCaseEntry]()
-tests += TestbenchTests.allTests()
+tests += TestbenchLibTests.allTests()
 XCTMain(tests)

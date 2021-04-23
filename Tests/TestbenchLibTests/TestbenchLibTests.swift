@@ -35,4 +35,9 @@ final class TestbenchLibTests: XCTestCase {
         try? FileManager.default.removeItem(at: file)
         try? FileManager.default.removeItem(at: folder)
     }
+
+    static var allTests = [
+        ("testFindResources", testFindResources),
+        ("testUnzipItem", testUnzipItem)
+    ]
 }

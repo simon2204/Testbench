@@ -9,20 +9,15 @@ struct Testbench: ParsableCommand {
     
     mutating func run() throws {
         guard let testbenchConfig = constructTestbenchConfiguration() else { return }
-        print(testbenchConfig)
-        Bundle.module.url(forResource: "config", withExtension: "json")
+        let unitTest = UnitTest(config: testbenchConfig)
+//        let submissionURL = 
+//        
+//        unitTest.performTestForSubmission(at: <#T##URL#>, withConfiguration: <#T##TestConfiguration#>)
         
-        let process = Process()
-        process.launchPath = "/usr/bin/env"
-        process.arguments = ["sudo", "-u", "simon"]
-              
-        process.launch()
+//        let process = Process()
+//        process.launchPath = "/usr/bin/env"
+//        process.arguments = ["sudo", "-u", "simon"]
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(200)) {
-            process.terminate()
-        }
-        
-        process.waitUntilExit()
     }
     
     func constructTestbenchConfiguration() -> TestbenchConfiguration? {

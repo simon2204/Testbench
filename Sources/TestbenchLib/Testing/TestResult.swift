@@ -5,8 +5,10 @@
 //  Created by Simon Schöpke on 18.04.21.
 //
 
-struct TestResult {
-    private(set) var entries: Result<[Entry], BuildError> = .success([])
+import Foundation
+
+public struct TestResult {
+    public private(set) var entries: Result<[Entry], Error> = .success([])
     
     mutating func appendEntry(_ newEntry: Entry) {
         switch entries {
@@ -15,7 +17,7 @@ struct TestResult {
         }
     }
     
-    mutating func buildWithError(_ error: BuildError) {
+    mutating func buildWithError(_ error: Error) {
         entries = .failure(error)
     }
     
@@ -25,17 +27,42 @@ struct TestResult {
         self.entries = .success(newEntries)
     }
     
-    struct Entry {
+    public struct Entry {
         let task: Task
         let successful: Bool
         var points: Int {
             return successful ? task.points : 0
         }
     }
-    
-    enum BuildError: Error {
-        case didNotCompile
-        case couldNotCreateDoxygenFile
-        case timeout
+}
+
+extension TestResult {
+    static func fromLogfile(at url: URL, testconfig: TestConfiguration) throws -> TestResult {
+        var testResult = TestResult()
+        
+        let logdata = try String(contentsOfFile: url.path)
+        let lines = logdata.components(separatedBy: .newlines)
+        
+        for line in lines {
+            if line.isEmpty || line.hasPrefix("#") { continue }
+            
+            let entries = line.components(separatedBy: "\t")
+            
+            let taskID = Int(entries[0]) ?? 0
+            let successful = entries[1].lowercased() == "success"
+            
+            // TODO: Implement description
+            let description = entries.count > 2 ? entries[2] : ""
+            
+            guard let task = testconfig
+                    .tasks
+                    .first(where: {$0.id == taskID}) else { continue }
+            
+            let entry = Entry(task: task, successful: successful)
+            
+            testResult.appendEntry(entry)
+        }
+        
+        return testResult
     }
 }

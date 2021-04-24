@@ -7,14 +7,15 @@
 
 import Foundation
 
-final class UnitTest {
+public final class UnitTest {
     private let testbenchConfig: TestbenchConfiguration
     
-    init(config: TestbenchConfiguration) {
+    public init(config: TestbenchConfiguration) {
         self.testbenchConfig = config
     }
     
-    func performTestForSubmission(at url: URL, withConfiguration testConfiguration: TestConfiguration) throws {
+    public func performTestForSubmission(at url: URL, withConfiguration testConfiguration: TestConfiguration) throws -> TestResult? {
+        
         do {
             let testEnvironment = try TestEnivronment(configuration: testbenchConfig,
                                                       submissionURL: url)
@@ -35,13 +36,17 @@ final class UnitTest {
             
             let runTimeInSeconds = try compiler.run(withDeadline: .milliseconds(timeoutInMilliseconds))
             
-            // TODO: Parse logfile
             
-            
+            let logfileURL = testEnvironment.destination.appendingPathComponent("testresult.csv")
+            let result = try TestResult.fromLogfile(at: logfileURL, testconfig: testConfiguration)
             
             testEnvironment.cleanUp()
+            
+            return result
         } catch {
             print(error)
         }
+        
+        return nil
     }
 }

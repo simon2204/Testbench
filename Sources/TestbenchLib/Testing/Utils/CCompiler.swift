@@ -32,7 +32,7 @@ struct CCompiler {
         let testExecutable = destination.appendingPathComponent("test_executable")
         
         let secondsNeeded = try CCompiler.measureExecutionTime {
-            // TODO: Arguments
+            // TODO: Arguments for Process
             let task = try Process.run(testExecutable, arguments: [])
             let deadlineHasPassed = task.waitUntilExit(deadline: .now() + deadline)
             if deadlineHasPassed { throw CompileError.runTimeExceeded(seconds: deadline.seconds) }

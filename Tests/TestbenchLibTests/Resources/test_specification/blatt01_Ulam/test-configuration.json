@@ -1,0 +1,28 @@
+{
+    "relativeTestDirectory": "tests",
+    "name": "1. Ulam-Varianten",
+    "assignmentId": "82893",
+    "type": "unitTest",
+    "tasks": [
+        { "id": 1, "name": "Testfall 1: ulam_max(-1)", "points": 1 },
+        { "id": 2, "name": "Testfall 2: ulam_max(0)", "points": 1 },
+        { "id": 3, "name": "Testfall 3: ulam_max(1)", "points": 1 },
+        { "id": 4, "name": "Testfall 4: ulam_max(2)", "points": 1 },
+        { "id": 5, "name": "Testfall 5: ulam_max(3)", "points": 1 },
+        { "id": 6, "name": "Testfall 6: ulam_max(4)", "points": 1 },
+        { "id": 7, "name": "Testfall 7: ulam_max(5)", "points": 1 },
+        { "id": 8, "name": "Testfall 8: ulam_twins(0)", "points": 1 },
+        { "id": 9, "name": "Testfall 9: ulam_twins(5)", "points": 1 },
+        { "id": 10, "name": "Testfall 10: ulam_twins(6)", "points": 1 },
+        { "id": 11, "name": "Testfall 11: ulam_multiples(0, 2)", "points": 1 },
+        { "id": 12, "name": "Testfall 12: ulam_multiples(10, 0)", "points": 1 },
+        { "id": 13, "name": "Testfall 13: ulam_multiples(5, 2)", "points": 1 },
+        { "id": 14, "name": "Testfall 14: ulam_multiples(109, 4)", "points": 1 },
+        { "id": 15, "name": "Testfall 15: ulam_multiples(110, 4)", "points": 1 },
+        { "id": 16, "name": "Testfall 16: ulam_multiples(111, 4)", "points": 1 },
+        { "id": 17, "name": "Testfall 17: ulam_multiples(1000, 2)", "points": 1 },
+        { "id": 18, "name": "Testfall 18: ulam_multiples(391, 6)", "points": 1 }
+    ],
+    "pointsNeeded": 15,
+    "timeoutInMs": 500
+}

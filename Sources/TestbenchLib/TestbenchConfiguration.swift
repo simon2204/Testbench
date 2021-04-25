@@ -7,9 +7,10 @@
 
 import Foundation
 
-public struct TestbenchConfiguration: Decodable {
-    public let workingDirectory: URL
-    public let testSpecificationDirectory: URL
+public struct TestbenchConfiguration: ObtainableFromDirectory {
+    public var file: URL?
+    public let workingDirectory: String
+    public let testSpecificationDirectory: String
     public let moodleUsername: String
     public let moodlePassword: String
     public let adminEmails: [URL]

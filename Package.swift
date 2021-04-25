@@ -17,20 +17,16 @@ let package = Package(
                 "TestbenchLib",
                 .product(name: "ArgumentParser", package: "swift-argument-parser")
             ],
-            resources: [
-                .process("Resources"),
-            ]
+            resources: [.process("Resources")]
         ),
         .target(
             name: "TestbenchLib",
-            dependencies: [
-                .product(name: "ZIPFoundation", package: "ZIPFoundation")
-            ]
+            dependencies: ["ZIPFoundation"]
         ),
         .testTarget(
             name: "TestbenchLibTests",
             dependencies: ["TestbenchLib"],
-            resources: [.process("Resources")]
+            resources: [.copy("Resources")]
         ),
     ]
 )

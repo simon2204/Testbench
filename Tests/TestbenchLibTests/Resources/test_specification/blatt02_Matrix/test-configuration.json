@@ -1,0 +1,19 @@
+{
+    "name": "2. Matrix",
+    "assignmentId": "82894",
+    "type": "UNIT_TEST",
+    "tasks": [
+        { "id": "1", "name": "Testfall 1: 1x1 Matrix", "points": "1" },
+        { "id": "2", "name": "Testfall 2: 2x2 Matrix", "points": "1" },
+        { "id": "3", "name": "Testfall 3: 2x2 Matrix", "points": "1" },
+        { "id": "4", "name": "Testfall 4: 3x3 Matrix", "points": "1" },
+        { "id": "5", "name": "Testfall 5: 3x3 Matrix", "points": "1" },
+        { "id": "6", "name": "Testfall 6: 3x3 Matrix", "points": "1" },
+        { "id": "7", "name": "Testfall 7: 4x4 Matrix", "points": "1" },
+        { "id": "8", "name": "Testfall 8: 10x10 Matrix", "points": "1" },
+        { "id": "9", "name": "Testfall 9: Ungueltiger Wert für Parameter size: 0", "points": "1" },
+        { "id": "10", "name": "Testfall 10: Ungueltiger Wert fuer Parameter size: MAX_SIZE + 1", "points": "1" }
+    ],
+    "pointsNeeded": 10,
+    "timeoutInMs": 500
+} 

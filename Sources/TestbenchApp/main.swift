@@ -8,34 +8,33 @@ struct Testbench: ParsableCommand {
     var config: String?
     
     mutating func run() throws {
-        guard let testbenchConfig = constructTestbenchConfiguration() else { return }
-        let unitTest = UnitTest(config: testbenchConfig)
-//        let submissionURL = 
-//        
-//        unitTest.performTestForSubmission(at: <#T##URL#>, withConfiguration: <#T##TestConfiguration#>)
+        guard let testbenchConfig = try constructTestbenchConfiguration() else { return }
         
-//        let process = Process()
-//        process.launchPath = "/usr/bin/env"
-//        process.arguments = ["sudo", "-u", "simon"]
-        
+        let testConfigURL = URL(fileURLWithPath: "/Users/Simon/Desktop/test_specification/blatt01_Ulam")
+        let submissionURL = URL(fileURLWithPath: "/Users/Simon/Desktop/submission")
+
+        let unitTest = UnitTest(testbenchConfiguration: testbenchConfig)
+
+        let testConfiguration = try TestConfiguration(directory: testConfigURL,
+                                                      fileName: "test-configuration.json")
+
+        let result = try unitTest.performTestForSubmission(at: submissionURL, withConfiguration: testConfiguration)
     }
     
-    func constructTestbenchConfiguration() -> TestbenchConfiguration? {
-        testbenchConfigurationFromInput() ?? Testbench.testbenchConfigurationFromResources()
+    func constructTestbenchConfiguration() throws -> TestbenchConfiguration? {
+        try testbenchConfigurationFromInput() ?? Testbench.testbenchConfigurationFromResources()
     }
     
-    func testbenchConfigurationFromInput() -> TestbenchConfiguration? {
+    func testbenchConfigurationFromInput() throws -> TestbenchConfiguration? {
         guard let config = config else { return nil }
-        return try? TestbenchConfiguration.loadWithJSONDecoder(from: URL(fileURLWithPath: config))
+        return try TestbenchConfiguration.loadWithJSONDecoder(from: URL(fileURLWithPath: config))
     }
     
-    static func testbenchConfigurationFromResources() -> TestbenchConfiguration? {
+    static func testbenchConfigurationFromResources() throws -> TestbenchConfiguration? {
         guard let defaultConfigURL = Bundle.module.url(forResource: "config", withExtension: "json")
         else { return nil }
-        return try? TestbenchConfiguration.loadWithJSONDecoder(from: defaultConfigURL)
+        return try TestbenchConfiguration.loadWithJSONDecoder(from: defaultConfigURL)
     }
 }
 
 Testbench.main()
-
-

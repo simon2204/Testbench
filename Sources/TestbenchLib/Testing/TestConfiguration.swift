@@ -5,15 +5,24 @@
 //  Created by Simon Schöpke on 18.04.21.
 //
 
-public struct TestConfiguration: Decodable {
+import Foundation
+
+public struct TestConfiguration: ObtainableFromDirectory {
+    public var file: URL?
+    let relativeTestDirectory: String
     let name: String
     let assignmentId: String
     let type: TestType
     let tasks: [Task]
     let pointsNeeded: Int
-    let timeoutInMS: Int
+    let timeoutInMs: Int
+    
+    var testDirectory: URL? {
+        file?.deletingLastPathComponent().appendingPathComponent(relativeTestDirectory)
+    }
     
     enum TestType: String, Decodable {
         case unitTest, commandLineTest
     }
 }
+

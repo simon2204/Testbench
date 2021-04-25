@@ -16,17 +16,17 @@ extension FileManager {
 }
 
 extension FileManager {
-    func copyItems(at srcURL: URL, into dstURL: URL) {
+    func copyItems(at srcURL: URL, into dstURL: URL) throws {
         let items = self.items(at: srcURL)
         
         for item in items {
             let dstItem = dstURL.appendingPathComponent(item.lastPathComponent)
             
             if FileManager.default.fileExists(atPath: dstItem.path) {
-                try? FileManager.default.removeItem(at: dstItem)
+                try FileManager.default.removeItem(at: dstItem)
             }
             
-            try? FileManager.default.copyItem(at: item,
+            try FileManager.default.copyItem(at: item,
                                               to: dstItem)
         }
     }
@@ -49,5 +49,41 @@ extension FileManager {
     
     private static func hasZIPPathExtension(url: URL) -> Bool {
         url.pathExtension == "zip"
+    }
+}
+
+extension FileManager {
+    /// Recursively searches for a file at a directory matching a specific name.
+    /// - Parameters:
+    ///   - name: Name of a file to search for.
+    ///   - url: The Directory in which to look for.
+    /// - Returns: The first `URL` to the file with the given name.
+    func firstFile(named name: String, at url: URL) -> URL? {
+        let files = files(at: url)
+        return files.first(where: { $0.lastPathComponent == name })
+    }
+    
+    /// Recursively searches for all files at the given directory.
+    /// - Parameter url: The directory in which to look for.
+    /// - Returns: An array of all urls found at the given directory.
+    func files(at url: URL) -> [URL] {
+        var files = [URL]()
+        
+        if let enumerator = FileManager
+            .default
+            .enumerator(at: url, includingPropertiesForKeys: [.isRegularFileKey],
+                        options: [.skipsHiddenFiles, .skipsPackageDescendants]) {
+            
+            for case let fileURL as URL in enumerator {
+                
+                let fileAttributes = try? fileURL.resourceValues(forKeys: [.isRegularFileKey])
+            
+                if fileAttributes?.isRegularFile ?? false {
+                    files.append(fileURL)
+                }
+            }
+        }
+
+        return files
     }
 }

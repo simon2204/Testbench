@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Decodable+.swift
 //  
 //
 //  Created by Simon Schöpke on 18.04.21.

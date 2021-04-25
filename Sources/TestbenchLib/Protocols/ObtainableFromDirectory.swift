@@ -14,6 +14,7 @@ public protocol ObtainableFromDirectory: Decodable {
 
 extension ObtainableFromDirectory {
     public init(directory: URL, fileName: String) throws {
+        
         guard let file = FileManager
             .default
             .firstFile(named: fileName, at: directory)

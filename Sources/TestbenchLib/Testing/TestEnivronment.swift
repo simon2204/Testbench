@@ -11,7 +11,6 @@ struct TestEnivronment {
     let destination: URL
     private let test: URL
     private let submission: URL
-    
     private let source: URL
     
     private var sourceTestbenchLoggingC: URL {

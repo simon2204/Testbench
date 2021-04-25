@@ -16,17 +16,17 @@ public struct UnitTest {
     
     public func performTestForSubmission(at url: URL,
                                          withConfiguration testConfiguration: TestConfiguration) throws -> TestResult {
+        guard let testDirectory = testConfiguration.testDirectory else { throw TestError.testDirectoryNotFound }
         
         let workingDirectory = URL(fileURLWithPath: testbenchConfig.workingDirectory)
         let testSpecificationDirectory = URL(fileURLWithPath: testbenchConfig.testSpecificationDirectory)
         
-        guard let testDirectory = testConfiguration.testDirectory else { throw TestError.testDirectoryNotFound }
+        let timeoutInMilliseconds = testConfiguration.timeoutInMs
         
         let testEnvironment = try TestEnivronment(workingURL: workingDirectory,
                                                   testSpecificationURL: testSpecificationDirectory,
                                                   testURL: testDirectory,
                                                   submissionURL: url)
-        
         defer {
             testEnvironment.cleanUp()
         }
@@ -45,10 +45,7 @@ public struct UnitTest {
                                  options: buildOptions)
 
         let buildTime = try compiler.build()
-
-        let timeoutInMilliseconds = testConfiguration.timeoutInMs
-
-        let runTimeInSeconds = try compiler.run(withDeadline: .milliseconds(timeoutInMilliseconds))
+        let runTime = try compiler.run(withDeadline: .milliseconds(timeoutInMilliseconds))
 
         let logfileURL = testEnvironment.destination.appendingPathComponent("testresult.csv")
         let result = try TestResult.fromLogfile(at: logfileURL, testconfig: testConfiguration)

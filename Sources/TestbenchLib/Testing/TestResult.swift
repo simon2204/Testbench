@@ -48,10 +48,11 @@ extension TestResult {
             
             let entries = line.components(separatedBy: "\t")
             
-            let taskID = Int(entries[0]) ?? 0
+            guard let taskID = Int(entries[0]) else { continue }
+            
             let successful = entries[1].lowercased() == "success"
             
-            // TODO: Implement description
+            // TODO: Make use of description
             let description = entries.count > 2 ? entries[2] : ""
             
             guard let task = testconfig

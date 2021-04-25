@@ -8,17 +8,7 @@ struct Testbench: ParsableCommand {
     var config: String?
     
     mutating func run() throws {
-        guard let testbenchConfig = try constructTestbenchConfiguration() else { return }
-        
-        let testConfigURL = URL(fileURLWithPath: "/Users/Simon/Desktop/test_specification/blatt01_Ulam")
-        let submissionURL = URL(fileURLWithPath: "/Users/Simon/Desktop/submission")
-
-        let unitTest = UnitTest(testbenchConfiguration: testbenchConfig)
-
-        let testConfiguration = try TestConfiguration(directory: testConfigURL,
-                                                      fileName: "test-configuration.json")
-
-        let result = try unitTest.performTestForSubmission(at: submissionURL, withConfiguration: testConfiguration)
+        guard let _ = try constructTestbenchConfiguration() else { return }
     }
     
     func constructTestbenchConfiguration() throws -> TestbenchConfiguration? {

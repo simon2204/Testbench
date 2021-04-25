@@ -12,6 +12,7 @@ final class TestbenchLibTests: XCTestCase {
     override class func setUp() {
         // URL to XCTest's Resources directory
         let resources = Bundle.module.resourceURL!.appendingPathComponent("Resources")
+        // Copy all needed files into a temporary directory.
         try? FileManager.default.copyItem(at: resources, to: tmpDirectory)
         try? FileManager.default.createDirectory(at: TestbenchLibTests.workingDirectory,
                                                  withIntermediateDirectories: false)
@@ -48,12 +49,13 @@ final class TestbenchLibTests: XCTestCase {
         case .failure:
             XCTFail()
         case .success(let entries):
+            XCTAssert(!entries.isEmpty)
             entries.forEach { XCTAssert($0.successful) }
         }
     }
     
     func testUlamDoesNotCompile() throws {
-        print(TestbenchLibTests.workingDirectory.path)
+        var thrownError: Error?
         
         let ulamSuccessful = TestbenchLibTests
             .submission
@@ -70,15 +72,14 @@ final class TestbenchLibTests: XCTestCase {
         let testConfig = try TestConfiguration(directory: ulamURL,
                                                fileName: "test-configuration.json")
         
-        let result = try unitTest.performTestForSubmission(at: ulamSuccessful,
-                                                           withConfiguration: testConfig)
-
-        switch result.entries {
-        case .failure:
-            XCTFail()
-        case .success(let entries):
-            entries.forEach { XCTAssert($0.successful) }
+        XCTAssertThrowsError(try unitTest.performTestForSubmission(at: ulamSuccessful,
+                                                                   withConfiguration: testConfig)) { error in
+            thrownError = error
         }
+        
+        XCTAssertTrue(thrownError is CCompiler.CompileError)
+        
+        XCTAssertEqual(thrownError as? CCompiler.CompileError, .didNotCompile(status: 1))
     }
     
     func testUlamInfiniteLoop() throws {
@@ -99,6 +100,8 @@ final class TestbenchLibTests: XCTestCase {
         let testConfig = try TestConfiguration(directory: ulamURL,
                                                fileName: "test-configuration.json")
         
+        let timeoutInSeconds = Double(testConfig.timeoutInMs) / 1_000
+        
         XCTAssertThrowsError(try unitTest.performTestForSubmission(at: ulamSuccessful,
                                                                    withConfiguration: testConfig)) { error in
             thrownError = error
@@ -106,13 +109,11 @@ final class TestbenchLibTests: XCTestCase {
         
         XCTAssertTrue(thrownError is CCompiler.CompileError)
         
-        let timeoutInSeconds = Double(testConfig.timeoutInMs) / 1_000
-        
         XCTAssertEqual(thrownError as? CCompiler.CompileError, .runTimeExceeded(seconds: timeoutInSeconds))
     }
     
     func testUlamProgramCrash() throws {
-        print(TestbenchLibTests.workingDirectory.path)
+        var thrownError: Error?
         
         let ulamSuccessful = TestbenchLibTests
             .submission
@@ -129,15 +130,14 @@ final class TestbenchLibTests: XCTestCase {
         let testConfig = try TestConfiguration(directory: ulamURL,
                                                fileName: "test-configuration.json")
         
-        let result = try unitTest.performTestForSubmission(at: ulamSuccessful,
-                                                           withConfiguration: testConfig)
-
-        switch result.entries {
-        case .failure:
-            XCTFail()
-        case .success(let entries):
-            entries.forEach { XCTAssert($0.successful) }
+        XCTAssertThrowsError(try unitTest.performTestForSubmission(at: ulamSuccessful,
+                                                                   withConfiguration: testConfig)) { error in
+            thrownError = error
         }
+        
+        XCTAssertTrue(thrownError is CCompiler.CompileError)
+        
+        XCTAssertEqual(thrownError as? CCompiler.CompileError, .uncaughtSignal(status: 11))
     }
 
     static var allTests = [

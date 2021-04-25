@@ -89,23 +89,10 @@ extension CCompiler {
 }
 
 extension CCompiler {
-    enum CompileError: LocalizedError, Equatable {
+    enum CompileError: Error, Equatable {
         case buildTimeExceeded(seconds: TimeInterval)
         case runTimeExceeded(seconds: TimeInterval)
         case didNotCompile(status: Int32)
         case uncaughtSignal(status: Int32)
-        
-        var errorDescription: String? {
-            switch self {
-            case .buildTimeExceeded(seconds: let seconds):
-                return "Build time of \(seconds) seconds has been exceeded."
-            case .runTimeExceeded(seconds: let seconds):
-                return "Run time of \(seconds) seconds has been exceeded."
-            case .didNotCompile(status: let status):
-                return "Executable couldn't be created with status code \(status)."
-            case .uncaughtSignal(status: let status):
-                return "Termination due to uncaught signal with status code \(status)."
-            }
-        }
     }
 }

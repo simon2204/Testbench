@@ -11,7 +11,7 @@ public struct Testbench {
     static let resources = Bundle.module.resourceURL!.appendingPathComponent("Resources")
     static let testSpecification = resources.appendingPathComponent("test_specification")
     
-    static func findAllTestConfigurations() -> [TestConfiguration] {
+    public static func findAllTestConfigurations() -> [TestConfiguration] {
         TestConfiguration.findAllFiles(named: "test-configuration.json", at: Testbench.testSpecification)
     }
 }

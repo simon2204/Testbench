@@ -9,6 +9,7 @@ struct Testbench: ParsableCommand {
     
     mutating func run() throws {
         guard let _ = try constructTestbenchConfiguration() else { return }
+    
     }
     
     func constructTestbenchConfiguration() throws -> TestbenchConfiguration? {

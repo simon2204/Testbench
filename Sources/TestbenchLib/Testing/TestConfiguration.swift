@@ -22,7 +22,8 @@ public struct TestConfiguration: ObtainableFromDirectory {
     }
     
     enum TestType: String, Decodable {
-        case unitTest, commandLineTest
+        case unitTest           = "UNIT_TEST"
+        case commandLineTest    = "COMMAND_LINE_ARG_TEST"
     }
 }
 

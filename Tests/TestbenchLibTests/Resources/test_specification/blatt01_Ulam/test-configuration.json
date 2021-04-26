@@ -2,7 +2,7 @@
     "relativeTestDirectory": "tests",
     "name": "1. Ulam-Varianten",
     "assignmentId": "82893",
-    "type": "unitTest",
+    "type": "UNIT_TEST",
     "tasks": [
         { "id": 1, "name": "Testfall 1: ulam_max(-1)", "points": 1 },
         { "id": 2, "name": "Testfall 2: ulam_max(0)", "points": 1 },

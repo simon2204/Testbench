@@ -1,0 +1,14 @@
+{
+    "name": "Huffman Finale",
+    "assignmentId": "82901",
+    "type": "COMMAND_LINE_ARG_TEST",
+    "tasks": [
+        {
+            "name": "calculate something",
+            "points": "5",
+            "testScript": "test.py",
+            "timeoutInMs": 2000
+        }
+    ],
+    "pointsNeeded": 20
+} 

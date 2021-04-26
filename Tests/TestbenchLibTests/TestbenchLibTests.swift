@@ -150,11 +150,21 @@ final class TestbenchLibTests: XCTestCase {
         
         XCTAssertEqual(thrownError as? CCompiler.CompileError, .uncaughtSignal(status: 11))
     }
+    
+    func testFindTestConfigurationFiles() throws {
+        let testConfigurationName = "test-configuration.json"
+        let testConfigurations = TestConfiguration
+            .findAllFiles(named: testConfigurationName,
+                     at: TestbenchLibTests.testSpecification)
+        let currentTestConfigurationCount = 4
+        XCTAssertEqual(testConfigurations.count, currentTestConfigurationCount)
+    }
 
     static var allTests = [
         ("testUlamSuccessful", testUlamSuccessful),
         ("testUlamDoesNotCompile", testUlamDoesNotCompile),
         ("testUlamInfiniteLoop", testUlamInfiniteLoop),
-        ("testUlamProgramCrash", testUlamProgramCrash)
+        ("testUlamProgramCrash", testUlamProgramCrash),
+        ("testFindTestConfigurationFiles", testFindTestConfigurationFiles)
     ]
 }

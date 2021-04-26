@@ -13,7 +13,7 @@ struct CCompiler {
     let compiler: Compiler
     let options: BuildOptions
     
-    func build() throws -> TimeInterval  {
+    func build() throws -> TimeInterval {
         let compilerURL = URL(fileURLWithPath: compiler.rawValue)
         
         let cFilePaths = CFileManager.cFiles(at: source).map(\.path)

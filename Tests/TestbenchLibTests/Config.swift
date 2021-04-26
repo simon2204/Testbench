@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Config.swift
 //  
 //
 //  Created by Simon Schöpke on 25.04.21.

@@ -43,7 +43,8 @@ public struct UnitTest {
                                  destination: outputFile,
                                  compiler: .gcc,
                                  options: buildOptions)
-
+        
+        // TODO: Make use of buildTime and runTime.
         let buildTime = try compiler.build()
         let runTime = try compiler.run(withDeadline: .milliseconds(timeoutInMilliseconds))
 

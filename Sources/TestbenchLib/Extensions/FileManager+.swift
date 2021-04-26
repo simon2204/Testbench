@@ -86,4 +86,12 @@ extension FileManager {
 
         return files
     }
+    
+    /// Recursively searches for all files with a specific name at the given directory.
+    /// - Parameter url: The directory in which to look for.
+    /// - Parameter name: The file name to filter for.
+    /// - Returns: An array of all urls found with the given name at the given directory.
+    func files(at url: URL, named name: String) -> [URL] {
+        self.files(at: url).filter { $0.lastPathComponent == name }
+    }
 }

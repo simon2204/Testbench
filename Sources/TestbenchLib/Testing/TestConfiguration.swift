@@ -27,3 +27,19 @@ public struct TestConfiguration: ObtainableFromDirectory {
     }
 }
 
+extension TestConfiguration {
+    public static func findAllFiles(named name: String, at url: URL) -> [TestConfiguration] {
+        let testConfigurationURLs = FileManager.default.files(at: url, named: name)
+        var testConfigurations = [TestConfiguration]()
+        
+        for testConfigurationURL in testConfigurationURLs {
+            guard
+                var testConfiguration = try? TestConfiguration.loadWithJSONDecoder(from: testConfigurationURL)
+            else { continue }
+            testConfiguration.file = testConfigurationURL
+            testConfigurations.append(testConfiguration)
+        }
+        
+        return testConfigurations
+    }
+}

@@ -24,5 +24,5 @@
         { "id": 18, "name": "Testfall 18: ulam_multiples(391, 6)", "points": 1 }
     ],
     "pointsNeeded": 15,
-    "timeoutInMs": 500
+    "timeoutInMs": 2000
 }

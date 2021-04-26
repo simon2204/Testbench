@@ -59,7 +59,7 @@ extension FileManager {
     ///   - url: The Directory in which to look for.
     /// - Returns: The first `URL` to the file with the given name.
     func firstFile(named name: String, at url: URL) -> URL? {
-        let files = files(at: url)
+        let files = self.files(at: url)
         return files.first(where: { $0.lastPathComponent == name })
     }
     

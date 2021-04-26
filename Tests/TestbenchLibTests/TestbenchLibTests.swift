@@ -1,5 +1,5 @@
 import XCTest
-import class Foundation.Bundle
+import Foundation
 @testable import TestbenchLib
 
 final class TestbenchLibTests: XCTestCase {
@@ -10,16 +10,27 @@ final class TestbenchLibTests: XCTestCase {
     static let submission = tmpDirectory.appendingPathComponent("submission")
 
     override class func setUp() {
+        
         // URL to XCTest's Resources directory
+        #if os(macOS)
         let resources = Bundle.module.resourceURL!.appendingPathComponent("Resources")
-        // Copy all needed files into a temporary directory.
-        try? FileManager.default.copyItem(at: resources, to: tmpDirectory)
-        try? FileManager.default.createDirectory(at: TestbenchLibTests.workingDirectory,
-                                                 withIntermediateDirectories: false)
+        #else
+        let resources = Bundle.module.resourceURL!
+        #endif
+        
         let configJSON = createConfigJSON(workingDirectoryPath: workingDirectory.path, testSpecificationDirectoryPath: testSpecification.path)
-        try? configJSON.write(to: tmpDirectory.appendingPathComponent("config.json"),
-                              atomically: true,
-                              encoding: .utf8)
+        
+        // Copy all needed files into a temporary directory.
+        do {
+            try FileManager.default.copyItem(at: resources, to: tmpDirectory)
+            try FileManager.default.createDirectory(at: TestbenchLibTests.workingDirectory,
+                                                     withIntermediateDirectories: false)
+            try configJSON.write(to: tmpDirectory.appendingPathComponent("config.json"),
+                                  atomically: true,
+                                  encoding: .utf8)
+        } catch {
+            print(error)
+        }
     }
     
     override class func tearDown() {

@@ -9,19 +9,19 @@ import Foundation
 
 public struct TestConfiguration: ObtainableFromDirectory {
     public var file: URL?
-    let relativeTestDirectory: String
-    let name: String
-    let assignmentId: String
-    let type: TestType
-    let tasks: [Task]
-    let pointsNeeded: Int
-    let timeoutInMs: Int
+    public let relativeTestDirectory: String
+    public let name: String
+    public let assignmentId: String
+    public let type: TestType
+    public let tasks: [Task]
+    public let pointsNeeded: Int
+    public let timeoutInMs: Int
     
-    var testDirectory: URL? {
+    public var testDirectory: URL? {
         file?.deletingLastPathComponent().appendingPathComponent(relativeTestDirectory)
     }
     
-    enum TestType: String, Decodable {
+    public enum TestType: String, Decodable {
         case unitTest           = "UNIT_TEST"
         case commandLineTest    = "COMMAND_LINE_ARG_TEST"
     }

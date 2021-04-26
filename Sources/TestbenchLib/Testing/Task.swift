@@ -5,8 +5,8 @@
 //  Created by Simon Schöpke on 18.04.21.
 //
 
-struct Task: Decodable {
-    let id: Int
-    let name: String
-    let points: Int
+public struct Task: Decodable {
+    public let id: Int
+    public let name: String
+    public let points: Int
 }

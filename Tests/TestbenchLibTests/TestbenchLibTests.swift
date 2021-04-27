@@ -159,12 +159,4 @@ final class TestbenchLibTests: XCTestCase {
         let currentTestConfigurationCount = 4
         XCTAssertEqual(testConfigurations.count, currentTestConfigurationCount)
     }
-
-    static var allTests = [
-        ("testUlamSuccessful", testUlamSuccessful),
-        ("testUlamDoesNotCompile", testUlamDoesNotCompile),
-        ("testUlamInfiniteLoop", testUlamInfiniteLoop),
-        ("testUlamProgramCrash", testUlamProgramCrash),
-        ("testFindTestConfigurationFiles", testFindTestConfigurationFiles)
-    ]
 }

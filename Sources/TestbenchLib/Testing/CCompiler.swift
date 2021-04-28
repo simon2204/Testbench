@@ -33,6 +33,7 @@ struct CCompiler {
     }
     
     func run(withDeadline deadline: DispatchTimeInterval) throws -> TimeInterval {
+        
         let secondsNeeded = try CCompiler.measureExecutionTime {
             let task = try Process.run(destination, arguments: [])
             let deadlineHasPassed = task.waitUntilExit(deadline: .now() + deadline)

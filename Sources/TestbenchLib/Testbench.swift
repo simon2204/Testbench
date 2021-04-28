@@ -12,6 +12,6 @@ public struct Testbench {
     static let testSpecification = resources.appendingPathComponent("test_specification")
     
     public static func findAllTestConfigurations() -> [TestConfiguration] {
-        TestConfiguration.findAllFiles(named: "test-configuration.json", at: Testbench.testSpecification)
+        TestConfiguration.makeFromFiles(named: "test-configuration.json", at: Testbench.testSpecification)
     }
 }

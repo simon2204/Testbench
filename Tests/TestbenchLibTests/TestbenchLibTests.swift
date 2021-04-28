@@ -9,6 +9,9 @@ final class TestbenchLibTests: XCTestCase {
     static let testSpecification = tmpDirectory.appendingPathComponent("test_specification")
     static let submission = tmpDirectory.appendingPathComponent("submission")
 
+    static let configJSON = "config.json"
+    static let testConfigJSON = "test-configuration.json"
+    
     override class func setUp() {
         
         // URL to XCTest's Resources directory
@@ -25,7 +28,7 @@ final class TestbenchLibTests: XCTestCase {
             try FileManager.default.copyItem(at: resources, to: tmpDirectory)
             try FileManager.default.createDirectory(at: TestbenchLibTests.workingDirectory,
                                                      withIntermediateDirectories: false)
-            try configJSON.write(to: tmpDirectory.appendingPathComponent("config.json"),
+            try configJSON.write(to: tmpDirectory.appendingPathComponent(TestbenchLibTests.configJSON),
                                   atomically: true,
                                   encoding: .utf8)
         } catch {
@@ -44,14 +47,14 @@ final class TestbenchLibTests: XCTestCase {
             .appendingPathComponent("successful")
         
         let testbenchConfig = try TestbenchConfiguration(directory: TestbenchLibTests.tmpDirectory,
-                                                         fileName: "config.json")
+                                                         fileName: TestbenchLibTests.configJSON)
         
         let unitTest = UnitTest(testbenchConfiguration: testbenchConfig)
         
         let ulamURL = TestbenchLibTests.testSpecification.appendingPathComponent("blatt01_Ulam")
         
         let testConfig = try TestConfiguration(directory: ulamURL,
-                                               fileName: "test-configuration.json")
+                                               fileName: TestbenchLibTests.testConfigJSON)
         
         let result = try unitTest.performTestForSubmission(at: ulamSuccessful,
                                                            withConfiguration: testConfig)
@@ -74,14 +77,14 @@ final class TestbenchLibTests: XCTestCase {
             .appendingPathComponent("doesNotCompile")
         
         let testbenchConfig = try TestbenchConfiguration(directory: TestbenchLibTests.tmpDirectory,
-                                                         fileName: "config.json")
+                                                         fileName: TestbenchLibTests.configJSON)
         
         let unitTest = UnitTest(testbenchConfiguration: testbenchConfig)
         
         let ulamURL = TestbenchLibTests.testSpecification.appendingPathComponent("blatt01_Ulam")
         
         let testConfig = try TestConfiguration(directory: ulamURL,
-                                               fileName: "test-configuration.json")
+                                               fileName: TestbenchLibTests.testConfigJSON)
         
         XCTAssertThrowsError(try unitTest.performTestForSubmission(at: ulamSuccessful,
                                                                    withConfiguration: testConfig)) { error in
@@ -102,14 +105,14 @@ final class TestbenchLibTests: XCTestCase {
             .appendingPathComponent("infiniteLoop")
         
         let testbenchConfig = try TestbenchConfiguration(directory: TestbenchLibTests.tmpDirectory,
-                                                         fileName: "config.json")
+                                                         fileName: TestbenchLibTests.configJSON)
         
         let unitTest = UnitTest(testbenchConfiguration: testbenchConfig)
         
         let ulamURL = TestbenchLibTests.testSpecification.appendingPathComponent("blatt01_Ulam")
         
         let testConfig = try TestConfiguration(directory: ulamURL,
-                                               fileName: "test-configuration.json")
+                                               fileName: TestbenchLibTests.testConfigJSON)
         
         let timeoutInSeconds = Double(testConfig.timeoutInMs) / 1_000
         
@@ -132,14 +135,14 @@ final class TestbenchLibTests: XCTestCase {
             .appendingPathComponent("programCrash")
         
         let testbenchConfig = try TestbenchConfiguration(directory: TestbenchLibTests.tmpDirectory,
-                                                         fileName: "config.json")
+                                                         fileName: TestbenchLibTests.configJSON)
         
         let unitTest = UnitTest(testbenchConfiguration: testbenchConfig)
         
         let ulamURL = TestbenchLibTests.testSpecification.appendingPathComponent("blatt01_Ulam")
         
         let testConfig = try TestConfiguration(directory: ulamURL,
-                                               fileName: "test-configuration.json")
+                                               fileName: TestbenchLibTests.testConfigJSON)
         
         XCTAssertThrowsError(try unitTest.performTestForSubmission(at: ulamSuccessful,
                                                                    withConfiguration: testConfig)) { error in
@@ -152,9 +155,8 @@ final class TestbenchLibTests: XCTestCase {
     }
     
     func testFindTestConfigurationFiles() throws {
-        let testConfigurationName = "test-configuration.json"
         let testConfigurations = TestConfiguration
-            .findAllFiles(named: testConfigurationName,
+            .makeFromFiles(named: TestbenchLibTests.testConfigJSON,
                      at: TestbenchLibTests.testSpecification)
         let currentTestConfigurationCount = 4
         XCTAssertEqual(testConfigurations.count, currentTestConfigurationCount)

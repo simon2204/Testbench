@@ -19,6 +19,7 @@ public struct UnitTest {
         guard let testDirectory = testConfiguration.testDirectory else { throw TestError.testDirectoryNotFound }
         
         let workingDirectory = URL(fileURLWithPath: testbenchConfig.workingDirectory)
+        
         let testSpecificationDirectory = URL(fileURLWithPath: testbenchConfig.testSpecificationDirectory)
         
         let timeoutInMilliseconds = testConfiguration.timeoutInMs

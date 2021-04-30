@@ -7,14 +7,14 @@
 
 import Foundation
 
-public struct TestResult: Encodable {
+public struct TestResult: Codable {
     public private(set) var entries: [Entry] = []
     
     mutating func appendEntry(_ newEntry: Entry) {
         entries.append(newEntry)
     }
     
-    public struct Entry: Encodable {
+    public struct Entry: Codable {
         let task: Task
         let successful: Bool
         var points: Int {

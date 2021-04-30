@@ -7,32 +7,25 @@
 
 import Foundation
 
-public struct TestResult {
-    public private(set) var entries: Result<[Entry], Error> = .success([])
+public struct TestResult: Encodable {
+    public private(set) var entries: [Entry] = []
     
     mutating func appendEntry(_ newEntry: Entry) {
-        switch entries {
-        case .failure: break
-        case .success(let entries): appendEntry(newEntry, to: entries)
-        }
+        entries.append(newEntry)
     }
     
-    mutating func buildWithError(_ error: Error) {
-        entries = .failure(error)
-    }
-    
-    private mutating func appendEntry(_ entry: Entry, to entries: [Entry]) {
-        var newEntries = entries
-        newEntries.append(entry)
-        self.entries = .success(newEntries)
-    }
-    
-    public struct Entry {
+    public struct Entry: Encodable {
         let task: Task
         let successful: Bool
         var points: Int {
             return successful ? task.points : 0
         }
+    }
+    
+    public struct Task: Codable {
+        public let id: Int
+        public let name: String
+        public let points: Int
     }
 }
 
@@ -60,7 +53,7 @@ extension TestResult {
             let successful = entries[1].lowercased() == "success"
             
             // TODO: Make use of description
-            // optional description of expected and actual value
+            // optional description of the expected and actual value
             let description = entries.count > 2 ? entries[2] : ""
             
             // retrieves the task for the specified taskID

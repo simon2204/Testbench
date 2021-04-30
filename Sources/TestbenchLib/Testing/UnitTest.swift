@@ -8,19 +8,19 @@
 import Foundation
 
 public struct UnitTest {
-    private let testbenchConfig: TestbenchConfiguration
+    let testbenchConfig: TestbenchConfiguration
     
-    public init (testbenchConfiguration: TestbenchConfiguration) {
-        self.testbenchConfig = testbenchConfiguration
+    var workingDirectory: URL {
+        URL(fileURLWithPath: testbenchConfig.workingDirectory)
     }
     
-    public func performTestForSubmission(at url: URL,
-                                         withConfiguration testConfiguration: TestConfiguration) throws -> TestResult {
+    var testSpecificationDirectory: URL {
+        URL(fileURLWithPath: testbenchConfig.testSpecificationDirectory)
+    }
+    
+    public func performTestForSubmission(at url: URL, withConfiguration testConfiguration: TestConfiguration) throws -> TestResult {
+        
         guard let testDirectory = testConfiguration.testDirectory else { throw TestError.testDirectoryNotFound }
-        
-        let workingDirectory = URL(fileURLWithPath: testbenchConfig.workingDirectory)
-        
-        let testSpecificationDirectory = URL(fileURLWithPath: testbenchConfig.testSpecificationDirectory)
         
         let timeoutInMilliseconds = testConfiguration.timeoutInMs
         

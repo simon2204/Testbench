@@ -49,7 +49,7 @@ final class TestbenchLibTests: XCTestCase {
         let testbenchConfig = try TestbenchConfiguration(directory: TestbenchLibTests.tmpDirectory,
                                                          fileName: TestbenchLibTests.configJSON)
         
-        let unitTest = UnitTest(testbenchConfiguration: testbenchConfig)
+        let unitTest = UnitTest(testbenchConfig: testbenchConfig)
         
         let ulamURL = TestbenchLibTests.testSpecification.appendingPathComponent("blatt01_Ulam")
         
@@ -59,13 +59,8 @@ final class TestbenchLibTests: XCTestCase {
         let result = try unitTest.performTestForSubmission(at: ulamSuccessful,
                                                            withConfiguration: testConfig)
 
-        switch result.entries {
-        case .failure:
-            XCTFail()
-        case .success(let entries):
-            XCTAssert(!entries.isEmpty)
-            entries.forEach { XCTAssert($0.successful) }
-        }
+        XCTAssert(!result.entries.isEmpty)
+        result.entries.forEach { XCTAssert($0.successful) }
     }
     
     func testUlamDoesNotCompile() throws {
@@ -79,7 +74,7 @@ final class TestbenchLibTests: XCTestCase {
         let testbenchConfig = try TestbenchConfiguration(directory: TestbenchLibTests.tmpDirectory,
                                                          fileName: TestbenchLibTests.configJSON)
         
-        let unitTest = UnitTest(testbenchConfiguration: testbenchConfig)
+        let unitTest = UnitTest(testbenchConfig: testbenchConfig)
         
         let ulamURL = TestbenchLibTests.testSpecification.appendingPathComponent("blatt01_Ulam")
         
@@ -107,7 +102,7 @@ final class TestbenchLibTests: XCTestCase {
         let testbenchConfig = try TestbenchConfiguration(directory: TestbenchLibTests.tmpDirectory,
                                                          fileName: TestbenchLibTests.configJSON)
         
-        let unitTest = UnitTest(testbenchConfiguration: testbenchConfig)
+        let unitTest = UnitTest(testbenchConfig: testbenchConfig)
         
         let ulamURL = TestbenchLibTests.testSpecification.appendingPathComponent("blatt01_Ulam")
         
@@ -137,7 +132,7 @@ final class TestbenchLibTests: XCTestCase {
         let testbenchConfig = try TestbenchConfiguration(directory: TestbenchLibTests.tmpDirectory,
                                                          fileName: TestbenchLibTests.configJSON)
         
-        let unitTest = UnitTest(testbenchConfiguration: testbenchConfig)
+        let unitTest = UnitTest(testbenchConfig: testbenchConfig)
         
         let ulamURL = TestbenchLibTests.testSpecification.appendingPathComponent("blatt01_Ulam")
         

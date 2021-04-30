@@ -1,7 +1,7 @@
 {
     "__comment": "THIS IS A SAMPLE CONFIGURATION. RENAME THIS FILE TO config.json.",
-    "workingDirectory": "/Users/Simon/Desktop/working_directory",
-    "testSpecificationDirectory": "/Users/Simon/Desktop/test_specification",
+    "workingDirectory": "/Users/Simon/Desktop/TestbenchDirectories/working_directory",
+    "testSpecificationDirectory": "/Users/Simon/Desktop/TestbenchDirectories/test_specification",
     "moodleUsername": "*******",
     "moodlePassword": "*******",
     "moodleURL": "https://moodle.w-hs.de",

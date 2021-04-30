@@ -15,7 +15,7 @@ public struct TestConfiguration: ObtainableFromDirectory {
     /// Relative path to the directory containing all test cases for an assignment.
     public let relativeTestDirectory: String
     
-    /// The assignments name.
+    /// The assignment's name.
     ///
     /// For expample: 1. Ulam-Varianten, 2. Matrix, 6. Huffman Kommandozeile.
     public let name: String
@@ -27,7 +27,7 @@ public struct TestConfiguration: ObtainableFromDirectory {
     public let type: TestType
     
     /// Tasks that are performed as test cases on the submission.
-    public let tasks: [Task]
+    public let tasks: [TestResult.Task]
     
     /// Points needed to pass an assignment.
     public let pointsNeeded: Int
@@ -37,7 +37,7 @@ public struct TestConfiguration: ObtainableFromDirectory {
     /// If the test cases need more than the specified amout of time, the submission might have run into an infinite loop.
     public let timeoutInMs: Int
     
-    /// The absolute `URL` to the test directory containing all test cases fo an assignment.
+    /// The absolute `URL` to the test directory containing all test cases for an assignment.
     public var testDirectory: URL? {
         // remove filename from the `URL` to get to the directory's `URL`
         // and go from there to the test directory

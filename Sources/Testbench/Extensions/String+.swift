@@ -15,4 +15,9 @@ extension String {
                                                    range: entireContent,
                                                    withTemplate: template)
     }
+    
+    func contains(expression: NSRegularExpression) -> Bool {
+        let entireContent = NSMakeRange(0, count)
+        return expression.firstMatch(in: self, range: entireContent) != nil
+    }
 }

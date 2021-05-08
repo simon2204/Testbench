@@ -28,7 +28,7 @@ void matrix_to_string(double matrix[MAX_SIZE][MAX_SIZE], int matrix_size, char* 
             snprintf(buffer, sizeof buffer, "%.2f", matrix[i][j]);
             strcat(result, buffer);
 
-            if(j != matrix_size -1) 
+            if(j != matrix_size -1)
             {
                 strcat(result, ", ");
             }

@@ -1,6 +1,6 @@
 {
-    "id": 6,
-    "label": "HuffmanKommandozeile (Blatt 6)",
+    "id": 7,
+    "label": "BinärerHeap (Blatt 7)",
     "timeoutInMs": 2000,
     "submissionExecutable": {"name": "submission-executable", "dependencies": "tests"},
 }

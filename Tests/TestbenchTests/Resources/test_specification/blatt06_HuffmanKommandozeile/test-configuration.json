@@ -1,23 +1,6 @@
 {
-    "relativeTestDirectory": "tests",
-    "name": "6. Huffman Kommandozeile",
-    "type": "COMMAND_LINE_ARG_TEST",
-    "assignmentId": "82898",
-    "tasks": [
-        { "id": 1, "name": "Testfall 1 : alle Parameter, ausser -h", "points": 1 },
-        { "id": 2, "name": "Testfall 2 : zu wenig Parameter", "points": 1 },
-        { "id": 3, "name": "Testfall 3 : -o Aufruf ohne Ausgabedatei", "points": 1 },
-        { "id": 4, "name": "Testfall 4 : mit Ausgabedatei", "points": 1 },
-        { "id": 5, "name": "Testfall 5 : Unbekannte Option", "points": 1 },
-        { "id": 6, "name": "Testfall 6 : Level bei Option -l fehlt", "points": 1 },
-        { "id": 7, "name": "Testfall 7 : Ungueltiger Level, muss zwischen 1 und 7 sein", "points": 1 },
-        { "id": 8, "name": "Testfall 8 : Namen von Ein- und Ausgabedatei sind gleich", "points": 1 },
-        { "id": 9, "name": "Testfall 9 : Weder -d noch -c angegeben", "points": 1 },
-        { "id": 10, "name": "Testfall 10 : Eingabedatei existiert nicht", "points": 1 },
-        { "id": 11, "name": "Testfall 11 : Grosse Datei, -c, Laufzeitmessung", "points": 1 },
-        { "id": 12, "name": "Testfall 12 : Grosse Datei, -d, Laufzeitmessung", "points": 1 }
-    ],
-    "pointsNeeded": 11,
-    "timeoutInMs": 3000,
-    "testScript": "testscript.py"
-} 
+    "id": 6,
+    "label": "HuffmanKommandozeile (Blatt 6)",
+    "timeoutInMs": 2000,
+    "submissionExecutable": {"name": "submission-executable", "dependencies": "tests"},
+}

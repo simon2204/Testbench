@@ -1,21 +1,6 @@
 {
-    "relativeTestDirectory": "tests",
-    "name": "3. Game Of Life",
-    "type": "UNIT_TEST",
-    "assignmentId": "101313",
-    "tasks": [
-        { "id": 1, "name": "Testfall 1: Wiederholtes aufrufen von set_generation_from_string", "points": 1 },
-        { "id": 2, "name": "Testfall 2: Keine Überlebenden", "points": 1 },
-        { "id": 3, "name": "Testfall 3: Ein Lebewesen (Mitte, Rand, Ecken) - Ein Nachbar(n)", "points": 1 },
-        { "id": 4, "name": "Testfall 4: Ein Lebewesen (Mitte, Rand, Ecken) - zwei Nachbar(n)", "points": 1 },
-        { "id": 5, "name": "Testfall 5: Ein Lebewesen (Mitte, Rand, Ecken) - drei Nachbar(n)", "points": 1 },
-        { "id": 6, "name": "Testfall 6: Ein Lebewesen (Mitte, Rand) - vier Nachbar(n)", "points": 1 },
-        { "id": 7, "name": "Testfall 7: Ein Lebewesen (rechter Rand) - Leben am gegenueber liegendem Rand", "points": 1 },
-        { "id": 8, "name": "Testfall 8: Null Lebewesen (Mitte, Rand, Ecke) - Zwei Nachbar(n)", "points": 1 },
-        { "id": 9, "name": "Testfall 9: Null Lebewesen (Mitte, Rand, Ecke) - drei Nachbar(n)", "points": 1 },
-        { "id": 10, "name": "Testfall 10: Null Lebewesen (Mitte, Rand) - Vier Nachbar(n)", "points": 1 },
-        { "id": 11, "name": "Testfall 11: GLIDER mit 32 Generationen", "points": 1 }
-    ],
-    "pointsNeeded": 11,
-    "timeoutInMs": 500
-} 
+    "id": 3,
+    "label": "GameOfLife (Blatt 3)",
+    "timeoutInMs": 2000,
+    "submissionExecutable": {"name": "submission-executable", "dependencies": "tests"},
+}

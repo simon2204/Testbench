@@ -15,6 +15,7 @@ struct TestEnivronment {
     private let submission: URL
     private let submissionDependencies: URL?
     private let customDependencies: URL?
+    private let sharedResources: URL?
     
     init(config: TestCase, submissionURL: URL) throws {
         let workingURL = config.workingDirectory
@@ -27,6 +28,8 @@ struct TestEnivronment {
         
         self.submissionDependencies = config.submissionExecutable.dependencies
         self.customDependencies = config.customTestExecutable?.dependencies
+        
+        self.sharedResources = config.sharedResources
         
         try setUpTestEnvironmentForSubmission()
         
@@ -57,6 +60,12 @@ struct TestEnivronment {
             if let dependencies = self.customDependencies {
                 try FileManager.default.copyItems(at: dependencies,
                                                   into: customBuild)
+            }
+            
+            if let sharedResources = self.sharedResources {
+                try FileManager.default.copyItems(
+                    at: sharedResources,
+                    into: destination)
             }
         
         } catch {

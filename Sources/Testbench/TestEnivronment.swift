@@ -91,7 +91,7 @@ struct TestEnivronment {
     }
     
     func cleanUp() {
-        try? FileManager.default.removeItem(at: destination)
+//        try? FileManager.default.removeItem(at: destination)
     }
 }
 

@@ -29,7 +29,7 @@ extension TestResult {
         var testResult = TestResult()
         
         // read in the logdata from a local file
-        let logdata = try String(contentsOfFile: url.path)
+        let logdata = try String(contentsOf: url, encoding: .utf8)
         
         // each line represents a test case's logdata
         let lines = logdata.components(separatedBy: .newlines)

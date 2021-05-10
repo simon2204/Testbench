@@ -38,9 +38,7 @@ struct Compiler {
         deadline: DispatchTimeInterval) throws -> TimeInterval {
         
         let secondsNeeded = try Compiler.measureExecutionTime {
-            
             let task = try Process.run(process, arguments: arguments)
-            
             let deadlineHasPassed = task.waitUntilExit(deadline: .now() + deadline)
             
             if deadlineHasPassed {

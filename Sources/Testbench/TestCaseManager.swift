@@ -8,11 +8,14 @@
 import Foundation
 
 struct TestCaseManager {
+    private let config: URL
     
-    let configURL: URL
+    init(config: URL) {
+        self.config = config
+    }
     
     func availableAssignments() throws -> [Assignment] {
-        let config = try GlobalConfig.loadWithJSONDecoder(from: self.configURL)
+        let config = try GlobalConfig.loadWithJSONDecoder(from: self.config)
         return config.assignments
     }
     
@@ -23,7 +26,7 @@ struct TestCaseManager {
             throw TestCaseError.assignmentNotFound(forID: id)
         }
         
-        let config = try GlobalConfig.loadWithJSONDecoder(from: configURL)
+        let config = try GlobalConfig.loadWithJSONDecoder(from: config)
         let testSpecURL = URL(fileURLWithPath: config.testSpecificationDirectory)
         let testConfigURL = URL(fileURLWithPath: assignment.filePath, relativeTo: testSpecURL)
         let testConfig = try TestConfig.loadWithJSONDecoder(from: testConfigURL)

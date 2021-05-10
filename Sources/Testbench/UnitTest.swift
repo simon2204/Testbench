@@ -8,6 +8,8 @@
 import Foundation
 
 public struct UnitTest {
+    private static let testbenchLogJSON = "ppr_tb_asserts_json.log"
+    
     private let config: TestCase
     private let submission: URL
     private let compiler: Compiler
@@ -23,9 +25,9 @@ public struct UnitTest {
     public func performTests() throws -> TestResult {
         let runTime = try executeTests()
         
-        let logfileURL = testEnvironment.urlToItem(withName: "ppr_tb_asserts_json.log")
+        let logfile = testEnvironment.getItem(withName: UnitTest.testbenchLogJSON)
         
-        var result = try TestResult.fromLogfile(at: logfileURL)
+        var result = try TestResult.fromLogfile(logfile)
         result.runTime = runTime
 
         return result
@@ -55,18 +57,24 @@ public struct UnitTest {
     private func runCustomTasks() throws -> TimeInterval {
         let _ = try buildSubmissionExecutable()
         
-        return try config.tasks.reduce(0) { runtime, task in
-            
-            let processName = self.testEnvironment
-                .urlToItem(withName: task.executableName)
-            
-            return try compiler.run(
-                process: processName,
-                arguments: task.commandLineArguments,
-                deadline: config.timeout)
-                + runtime
+        let totalRunTime = try config.tasks.reduce(0.0) { partialRunTime, task in
+            let runTime = try runCustomTask(task)
+            return runTime + partialRunTime
         }
+        
+        return totalRunTime
     }
+    
+    private func runCustomTask(_ task: TestCase.Process) throws -> TimeInterval {
+        let process = self.testEnvironment
+            .getItem(withName: task.executableName)
+        
+        return try compiler.run(
+            process: process,
+            arguments: task.commandLineArguments,
+            deadline: config.timeout)
+    }
+    
     
     /// Build the submission executable.
     /// - Returns: `URL` to the executable.
@@ -89,7 +97,7 @@ public struct UnitTest {
                                  fromSourceFiles files: [URL]) throws -> URL
     {
         let destination = testEnvironment
-            .urlToItem(withName: executable.name)
+            .getItem(withName: executable.name)
         
         let _ = try compiler.build(
             sourceFiles: files,

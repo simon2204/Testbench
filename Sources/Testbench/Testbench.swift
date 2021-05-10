@@ -11,7 +11,7 @@ public struct Testbench {
     private let testCaseManager: TestCaseManager
     
     public init(config: URL) {
-        testCaseManager = TestCaseManager(configURL: config)
+        testCaseManager = TestCaseManager(config: config)
     }
     
     public func availableAssignments() throws -> [Assignment] {

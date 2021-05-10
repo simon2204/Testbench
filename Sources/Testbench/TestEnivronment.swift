@@ -112,7 +112,7 @@ final class TestEnivronment {
         try CFileManager.cFiles(at: submissionBuild)
     }
     
-    func urlToItem(withName name: String) -> URL {
+    func getItem(withName name: String) -> URL {
         self.destination.appendingPathComponent(name)
     }
     

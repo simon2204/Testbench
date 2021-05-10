@@ -23,13 +23,13 @@ public struct TestResult: Codable {
 }
 
 extension TestResult {
-    static func fromLogfile(at url: URL) throws -> TestResult {
+    static func fromLogfile(_ logfile: URL) throws -> TestResult {
         let decoder = JSONDecoder()
         
         var testResult = TestResult()
         
         // read in the logdata from a local file
-        let logdata = try String(contentsOf: url, encoding: .utf8)
+        let logdata = try String(contentsOf: logfile, encoding: .utf8)
         
         // each line represents a test case's logdata
         let lines = logdata.components(separatedBy: .newlines)

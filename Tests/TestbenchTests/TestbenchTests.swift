@@ -49,9 +49,9 @@ final class TestbenchTests: XCTestCase {
         }
     }
 
-//    override class func tearDown() {
-//        try? FileManager.default.removeItem(at: tmpDirectory)
-//    }
+    override class func tearDown() {
+        try? FileManager.default.removeItem(at: tmpDirectory)
+    }
 
     func testUlamSuccessful() throws {
         let ulamSuccessful = TestbenchTests

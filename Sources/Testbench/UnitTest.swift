@@ -21,15 +21,7 @@ public struct UnitTest {
     }
     
     public func performTests() throws -> TestResult {
-        let runTime: TimeInterval
-        
-        let canBuildCustomExecutable = try buildCustomExecutable()
-    
-        if canBuildCustomExecutable {
-            runTime = try runCustomTasks()
-        } else {
-            runTime = try runSubmissionExecutable()
-        }
+        let runTime = try executeTests()
         
         let logfileURL = testEnvironment.urlToItem(withName: "ppr_tb_asserts_json.log")
         
@@ -37,6 +29,16 @@ public struct UnitTest {
         result.runTime = runTime
 
         return result
+    }
+    
+    private func executeTests() throws -> TimeInterval {
+        let canBuildCustomExecutable = try buildCustomExecutable()
+        
+        if canBuildCustomExecutable {
+            return try runCustomTasks()
+        } else {
+            return try runSubmissionExecutable()
+        }
     }
     
     private func runSubmissionExecutable() throws -> TimeInterval {
@@ -66,12 +68,16 @@ public struct UnitTest {
         }
     }
     
+    /// Build the submission executable.
+    /// - Returns: `URL` to the executable.
     private func buildSubmissionExecutable() throws -> URL {
         let executable = config.submissionExecutable
         let sourceFiles = try testEnvironment.submissionSourceFiles()
         return try buildExecutable(executable, fromSourceFiles: sourceFiles)
     }
     
+    /// Builds the constum executable.
+    /// - Returns: true, if a custom executable was specified and false otherwise.
     private func buildCustomExecutable() throws -> Bool {
         guard let executable = config.customTestExecutable else { return false }
         let sourceFiles = try testEnvironment.customSourceFiles()
@@ -82,20 +88,14 @@ public struct UnitTest {
     private func buildExecutable(_ executable: TestCase.Executable,
                                  fromSourceFiles files: [URL]) throws -> URL
     {
-        let customDestination = testEnvironment
+        let destination = testEnvironment
             .urlToItem(withName: executable.name)
         
         let _ = try compiler.build(
             sourceFiles: files,
-            destination: customDestination,
+            destination: destination,
             options: executable.buildOptions)
         
-        return customDestination
-    }
-    
-    enum TestError: Error, Equatable {
-        case testDirectoryNotFound
-        case buildTimeExceeded
-        case runTimeExceeded
+        return destination
     }
 }

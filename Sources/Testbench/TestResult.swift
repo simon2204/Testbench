@@ -35,16 +35,17 @@ extension TestResult {
         let lines = logdata.components(separatedBy: .newlines)
         
         for line in lines {
-            guard
-                !line.isEmpty,
-                let lineData = line.data(using: .utf8)
-            else { continue }
-            
-            let logfileEntry = try decoder.decode(LogfileEntry.self, from: lineData)
+            guard let data = dataFromLine(line) else { continue }
+            let logfileEntry = try decoder.decode(LogfileEntry.self, from: data)
             testResult.append(entry: logfileEntry)
         }
         
         return testResult
+    }
+    
+    private static func dataFromLine(_ line: String) -> Data? {
+        if line.isEmpty { return nil }
+        return line.data(using: .utf8)
     }
 }
 

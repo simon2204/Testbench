@@ -8,27 +8,22 @@
 import Foundation
 
 public struct UnitTest {
-    let config: TestCase
-    let submission: URL
+    private let config: TestCase
+    private let submission: URL
+    private let compiler: Compiler
+    private let testEnvironment: TestEnivronment
+    
+    init(config: TestCase, submission: URL) throws {
+        self.config = config
+        self.submission = submission
+        self.compiler = Compiler(config.compiler)
+        self.testEnvironment = try TestEnivronment(config: config, submission: submission)
+    }
     
     public func performTests() throws -> TestResult {
-        let testEvironment = try TestEnivronment(config: config, submissionURL: submission)
+        let runTime = try executeTests()
         
-        defer { testEvironment.cleanUp() }
-        
-        let runTime: TimeInterval
-    
-        if let customExecutable = config.customTestExecutable {
-            let _ = try buildSubmissionExecutable(testEvironment)
-            try buildCustomExecutable(testEvironment, customExecutable)
-            runTime = try runCustomTasks(testEvironment)
-        } else {
-            runTime = try runSubmissionExecutable(testEvironment)
-        }
-        
-        let logfileURL = testEvironment
-            .destination
-            .appendingPathComponent("ppr_tb_asserts_json.log")
+        let logfileURL = testEnvironment.urlToItem(withName: "ppr_tb_asserts_json.log")
         
         var result = try TestResult.fromLogfile(at: logfileURL)
         result.runTime = runTime
@@ -36,69 +31,71 @@ public struct UnitTest {
         return result
     }
     
-    private func runSubmissionExecutable(_ testEvironment: TestEnivronment) throws -> TimeInterval {
-        let compiler = Compiler(config.compiler)
+    private func executeTests() throws -> TimeInterval {
+        let canBuildCustomExecutable = try buildCustomExecutable()
         
-        let processName = try buildSubmissionExecutable(testEvironment)
+        if canBuildCustomExecutable {
+            return try runCustomTasks()
+        } else {
+            return try runSubmissionExecutable()
+        }
+    }
+    
+    private func runSubmissionExecutable() throws -> TimeInterval {
+        let executable = try buildSubmissionExecutable()
         
         let runTime = try compiler.run(
-            process: processName,
+            process: executable,
             arguments: [],
             deadline: config.timeout)
         
         return runTime
     }
     
-    private func runCustomTasks(_ testEvironment: TestEnivronment) throws -> TimeInterval  {
-        try config.tasks.reduce(0) { runtime, task in
-            let compiler = Compiler(config.compiler)
+    private func runCustomTasks() throws -> TimeInterval {
+        let _ = try buildSubmissionExecutable()
+        
+        return try config.tasks.reduce(0) { runtime, task in
             
-            let processName = testEvironment
-                .destination
-                .appendingPathComponent(task.executableName)
+            let processName = self.testEnvironment
+                .urlToItem(withName: task.executableName)
             
             return try compiler.run(
                 process: processName,
                 arguments: task.commandLineArguments,
-                deadline: config.timeout) + runtime
+                deadline: config.timeout)
+                + runtime
         }
     }
     
-    private func buildSubmissionExecutable(
-        _ testEvironment: TestEnivronment) throws -> URL
+    /// Build the submission executable.
+    /// - Returns: `URL` to the executable.
+    private func buildSubmissionExecutable() throws -> URL {
+        let executable = config.submissionExecutable
+        let sourceFiles = try testEnvironment.submissionSourceFiles()
+        return try buildExecutable(executable, fromSourceFiles: sourceFiles)
+    }
+    
+    /// Builds the constum executable.
+    /// - Returns: true, if a custom executable was specified and false otherwise.
+    private func buildCustomExecutable() throws -> Bool {
+        guard let executable = config.customTestExecutable else { return false }
+        let sourceFiles = try testEnvironment.customSourceFiles()
+        let _ = try buildExecutable(executable, fromSourceFiles: sourceFiles)
+        return true
+    }
+    
+    private func buildExecutable(_ executable: TestCase.Executable,
+                                 fromSourceFiles files: [URL]) throws -> URL
     {
-        let submissionDestination = testEvironment
-            .destination
-            .appendingPathComponent(config.submissionExecutable.name)
-        let submissionCompiler = Compiler(config.compiler)
-        let submissionBuildFiles = try CFileManager.cFiles(at: testEvironment.submissionBuild)
-        let _ = try submissionCompiler.build(
-            sourceFiles: submissionBuildFiles,
-            destination: submissionDestination,
-            options: config.submissionExecutable.buildOptions)
+        let destination = testEnvironment
+            .urlToItem(withName: executable.name)
         
-        return submissionDestination
-    }
-    
-    
-    private func buildCustomExecutable(
-        _ testEvironment: TestEnivronment,
-        _ customExecutable: TestCase.Executable) throws
-    {
-        let customDestination = testEvironment
-            .destination
-            .appendingPathComponent(customExecutable.name)
-        let customCompiler = Compiler(config.compiler)
-        let customBuildFiles = try CFileManager.cFiles(at: testEvironment.customBuild)
-        let _ = try customCompiler.build(
-            sourceFiles: customBuildFiles,
-            destination: customDestination,
-            options: customExecutable.buildOptions)
-    }
-    
-    enum TestError: Error, Equatable {
-        case testDirectoryNotFound
-        case buildTimeExceeded
-        case runTimeExceeded
+        let _ = try compiler.build(
+            sourceFiles: files,
+            destination: destination,
+            options: executable.buildOptions)
+        
+        return destination
     }
 }

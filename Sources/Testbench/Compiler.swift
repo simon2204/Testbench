@@ -22,18 +22,15 @@ struct Compiler {
         let sourceFilePaths = sourceFiles.map(\.path)
         let outputOption = "-o"
         let outputFile = "\(destination.path)"
-        let compilerArguments = sourceFilePaths + options + [outputOption, outputFile]
+        let buildArguments = sourceFilePaths + options + [outputOption, outputFile]
         
         let secondsNeeded = try Compiler.measureExecutionTime {
-            let task = try Process.run(compiler, arguments: compilerArguments)
-            task.waitUntilExit()
-            guard task.terminationStatus == 0 else {
-                throw CompileError.didNotCompile(status: task.terminationStatus)
-            }
+            try runBuildProcess(withArgs: buildArguments)
         }
         
         return secondsNeeded
     }
+    
     
     func run(
         process: URL,
@@ -41,15 +38,29 @@ struct Compiler {
         deadline: DispatchTimeInterval) throws -> TimeInterval {
         
         let secondsNeeded = try Compiler.measureExecutionTime {
+            
             let task = try Process.run(process, arguments: arguments)
+            
             let deadlineHasPassed = task.waitUntilExit(deadline: .now() + deadline)
-            if deadlineHasPassed { throw CompileError.runTimeExceeded(seconds: deadline.seconds) }
+            
+            if deadlineHasPassed {
+                throw CompileError.runTimeExceeded(seconds: deadline.seconds)
+            }
+            
             guard task.terminationReason == .exit else {
                 throw CompileError.uncaughtSignal(status: task.terminationStatus)
             }
         }
         
         return secondsNeeded
+    }
+    
+    private func runBuildProcess(withArgs arguments: [String]) throws {
+        let task = try Process.run(compiler, arguments: arguments)
+        task.waitUntilExit()
+        guard task.terminationStatus == 0 else {
+            throw CompileError.didNotCompile(status: task.terminationStatus)
+        }
     }
 }
 

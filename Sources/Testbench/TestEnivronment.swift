@@ -7,21 +7,20 @@
 
 import Foundation
 
-struct TestEnivronment {
-    let destination: URL
-    let submissionBuild: URL
-    let customBuild: URL
-    
+final class TestEnivronment {
+    private let submissionBuild: URL
+    private let customBuild: URL
+    private let destination: URL
     private let submission: URL
     private let submissionDependencies: URL?
     private let customDependencies: URL?
     private let sharedResources: URL?
     
-    init(config: TestCase, submissionURL: URL) throws {
+    init(config: TestCase, submission: URL) throws {
         let workingURL = config.workingDirectory
-        self.destination = TestEnivronment.appendingUniqueTestPathComponent(on: workingURL)
+        self.destination = TestEnivronment.appendingUniquePathComponent(on: workingURL)
         
-        self.submission = submissionURL
+        self.submission = submission
         
         self.submissionBuild = self.destination.appendingPathComponent("submissionBuild")
         self.customBuild = self.destination.appendingPathComponent("customBuild")
@@ -39,38 +38,23 @@ struct TestEnivronment {
     }
     
     private func setUpTestEnvironmentForSubmission() throws {
-        do {
-            try createTestEnvironment()
-            
-            try FileManager.default.copyItems(
-                at: submission,
-                into: submissionBuild)
-            
-            try FileManager.default.unzipItems(at: submissionBuild)
-            
-            if let dependencies = self.submissionDependencies {
-                if try CFileManager.containsMainFunction(in: dependencies) {
-                    try CFileManager.renameMainFunctions(at: submissionBuild)
-                }
-                try FileManager.default.copyItems(
-                    at: dependencies,
-                    into: submissionBuild)
-            }
-            
-            if let dependencies = self.customDependencies {
-                try FileManager.default.copyItems(at: dependencies,
-                                                  into: customBuild)
-            }
-            
-            if let sharedResources = self.sharedResources {
-                try FileManager.default.copyItems(
-                    at: sharedResources,
-                    into: destination)
-            }
         
-        } catch {
-            self.cleanUp()
-            throw error
+        try createTestEnvironment()
+        
+        try FileManager.default.copyItems(
+            at: submission,
+            into: submissionBuild)
+        
+        try FileManager.default.unzipItems(at: submissionBuild)
+        
+        try copySubmissionDependencies()
+        
+        try copyCustomDependencies()
+        
+        if let sharedResources = self.sharedResources {
+            try FileManager.default.copyItems(
+                at: sharedResources,
+                into: destination)
         }
     }
     
@@ -80,11 +64,13 @@ struct TestEnivronment {
                 .createDirectory(
                     atPath: destination.path,
                     withIntermediateDirectories: true)
+        
         try FileManager
                 .default
                 .createDirectory(
                     atPath: submissionBuild.path,
                     withIntermediateDirectories: false)
+        
         try FileManager
                 .default
                 .createDirectory(
@@ -92,15 +78,50 @@ struct TestEnivronment {
                     withIntermediateDirectories: false)
     }
     
-    private static func appendingUniqueTestPathComponent(on url: URL) -> URL {
-        var testEnvironment = url
-        testEnvironment.appendPathComponent("tests")
-        testEnvironment.appendPathComponent(UUID().uuidString)
-        return testEnvironment
+    private static func appendingUniquePathComponent(on url: URL) -> URL {
+        url.appendingPathComponent("tests")
+            .appendingPathComponent(UUID().uuidString)
     }
     
-    func cleanUp() {
+    private func copySubmissionDependencies() throws {
+        guard let dependencies = submissionDependencies else { return }
+        
+        if try CFileManager.containsMainFunction(in: dependencies) {
+            try CFileManager.renameMainFunctions(at: submissionBuild)
+        }
+        
+        try FileManager
+            .default
+            .copyItems(at: dependencies, into: submissionBuild)
+        
+    }
+    
+    fileprivate func copyCustomDependencies() throws {
+        guard let dependencies = customDependencies else { return }
+        
+        try FileManager
+            .default
+            .copyItems(at: dependencies, into: customBuild)
+    }
+    
+    func customSourceFiles() throws -> [URL] {
+        try CFileManager.cFiles(at: customBuild)
+    }
+    
+    func submissionSourceFiles() throws -> [URL] {
+        try CFileManager.cFiles(at: submissionBuild)
+    }
+    
+    func urlToItem(withName name: String) -> URL {
+        self.destination.appendingPathComponent(name)
+    }
+    
+    private func cleanUp() {
         try? FileManager.default.removeItem(at: destination)
+    }
+    
+    deinit {
+        cleanUp()
     }
 }
 

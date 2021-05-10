@@ -36,7 +36,7 @@ struct TestCaseManager {
     }
     
     func performTests(submission: URL, testcase: TestCase) throws -> TestResult {
-        let unitTest = UnitTest(config: testcase, submission: submission)
+        let unitTest = try UnitTest(config: testcase, submission: submission)
         return try unitTest.performTests()
     }
 }

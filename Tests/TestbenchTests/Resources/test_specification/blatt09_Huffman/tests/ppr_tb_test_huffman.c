@@ -16,11 +16,10 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include <sys/stat.h>    /* MS-DOS/WINDOWS */
+#include <sys/stat.h>
 
-#ifdef TESTBENCH
-#include "ppr_tb_logging.h"
-#endif
+
+#include "ppr_tb_logging_json.h"
 
 
 /* ============================================================================
@@ -28,148 +27,122 @@
  * ========================================================================= */
 
 bool ppr_tb_compare_filesizes(
-        char *in_filename, char *hc_filename, char *hd_filename);
-bool ppr_tb_compare_files(char *in_filename, char *hd_filename);
+        char *in_filename, char *hc_filename, char *hd_filename, char *error_buf);
+bool ppr_tb_compare_files(char *in_filename, char *hd_filename, char *error_buf);
 
 
 /* ============================================================================
  * Funktionsdefinitionen
  * ========================================================================= */
 
+
 /* ---------------------------------------------------------------------------
  * Funktion: main
  * ------------------------------------------------------------------------- */
-#ifndef TESTBENCH
+
 int main(int argc, char **argv)
 {
-    if (strcmp(argv[1], "-init") == 0)
+    char *in_filename = argv[1];
+    char *hc_filename = argv[2];
+    char *hd_filename = argv[3];
+    
+    int id = atoi(argv[4]);
+    int groupId = atoi(argv[5]);
+    int total = atoi(argv[6]);
+    
+    char *info = NULL;
+    
+    if (argc > 7)
     {
-        printf("%%SUITE_STARTING%% huffman_testsuite\n");
-        printf("%%SUITE_STARTED%%\n");
+        info = argv[7];
     }
-    if (strcmp(argv[1], "-end") == 0)
-    {
-        printf("%%SUITE_FINISHED%% time=0\n");
-    }
-    if (strcmp(argv[1], "-start") == 0)
-    {
-        printf("%%TEST_STARTED%% %s (huffman_testsuite)\n", argv[2]);
-    }
-    if (strcmp(argv[1], "-finish") == 0)
-    {
-        printf("%%TEST_FINISHED%% time=0 %s (huffman_testsuite)\n", argv[2]);
-    }
-    if (strcmp(argv[1], "-cmp") == 0)
-    {
-        char *in_filename = argv[2];
-        char *hc_filename = argv[3];
-        char *hd_filename = argv[4];
+    
+    char error_buf[LOGGING_SIZE] = {0};
 
-        if (ppr_tb_compare_filesizes(in_filename, hc_filename, hd_filename)
-                && ppr_tb_compare_files(in_filename, hd_filename))
-        {
-            printf("[OK]\n");
-        }
-        else
-        {
-            printf("[FAILED]\n");
-            printf("%%TEST_FAILED%% time=0 testname=%s (huffman_testsuite) message=compression and decompression do not work correct\n", argv[5]);
-        }
+    if (ppr_tb_compare_filesizes(in_filename, hc_filename, hd_filename, error_buf))
+    {
+        ppr_tb_compare_files(in_filename, hd_filename, error_buf);
     }
+    
+    ppr_tb_log_testcase(id, groupId, info, NULL, NULL, error_buf, total);
     
     return(EXIT_SUCCESS);
 }
-#endif
-#ifdef TESTBENCH
-int main(int argc, char **argv)
-{
-    if (strcmp(argv[1], "-summary") == 0)
-    {
-        ppr_tb_write_total_assert(atoi(argv[2]));
-        ppr_tb_write_summary("", argv[3]);
-    }
-    else
-    {
-        char *in_filename = argv[1];
-        char *hc_filename = argv[2];
-        char *hd_filename = argv[3];
-
-        if (ppr_tb_compare_filesizes(in_filename, hc_filename, hd_filename)
-                && ppr_tb_compare_files(in_filename, hd_filename))
-        {
-            ppr_tb_log_assert();
-        }
-    }
-    
-    return(EXIT_SUCCESS);
-}
-#endif
 
 
 /* ---------------------------------------------------------------------------
  * Funktion: ppr_tb_compare_filesizes
  * ------------------------------------------------------------------------- */
 bool ppr_tb_compare_filesizes(
-        char *in_filename, char *hc_filename, char *hd_filename)
-{       
-    struct stat attribut; /* Struktur f�r Datei-Eigenschaften */
-    int size_infile; /* Gr��e der �bergebenen Dateien */
-    int size_hcfile;
-    int size_hdfile;
-	bool ok = true;
+        char *in_filename, char *hc_filename, char *hd_filename, char *error_buf)
+{
+    struct stat attribut; /* Struktur für Datei-Eigenschaften */
+    long long size_infile; /* Größe der übergebenen Dateien */
+    long long size_hcfile;
+    long long size_hdfile;
+    bool ok = true;
     
-    printf("Groesse der Dateien\n");
+    printf("Grösse der Dateien\n");
 
     if (stat(in_filename, &attribut) == -1)
     {
         size_infile = -1;
-        printf("[ERROR] * %s: existiert nicht\n", in_filename);
+        sprintf(error_buf + strlen(error_buf),
+                "* %s: existiert nicht",
+                in_filename);
         ok = false;
     }
     else
     {
         size_infile = attribut.st_size;
-        printf(" * %-25s: %8d\n", in_filename, size_infile);
+        printf(" * %-25s: %8lld\n", in_filename, size_infile);
     }
 
     if (stat(hc_filename, &attribut) == -1)
     {
         size_hcfile = -1;
-        printf("[ERROR] * %s: existiert nicht\n", hc_filename);
+        sprintf(error_buf + strlen(error_buf),
+                "* %s: existiert nicht",
+                hc_filename);
         ok = false;
     }
     else
     {
         size_hcfile = attribut.st_size;
-        printf(" * %-25s: %8d\n", hc_filename, size_hcfile);
+        printf(" * %-25s: %8lld\n", hc_filename, size_hcfile);
     }
 
     if (stat(hd_filename, &attribut) == -1)
     {
         size_hdfile = -1;
-        printf("[ERROR] * %s: existiert nicht\n", hd_filename);
+        sprintf(error_buf + strlen(error_buf),
+                "* %s: existiert nicht",
+                hd_filename);
         ok = false;
     }
     else
     {
         size_hdfile = attribut.st_size;
-        printf(" * %-25s: %8d\n", hd_filename, size_hdfile);
+        printf(" * %-25s: %8lld\n", hd_filename, size_hdfile);
     }
 
     if (size_infile != -1 && size_hcfile != -1
             && size_infile > 2000 && size_infile < size_hcfile)
     {
-        printf("[ERROR] Die komprimierte Datei %s ist groesser als die "
-               "Originaldatei %s.\n", hc_filename, in_filename);
+        sprintf(error_buf + strlen(error_buf),
+                "Die komprimierte Datei %s ist größer als die "
+                "Originaldatei %s.",
+                hc_filename, in_filename);
         ok = false;
     }
 
     if (size_infile != -1 && size_hdfile != -1
             && size_infile != size_hdfile)
     {
-        printf("[ERROR] Die Original-Datei %s und die dekomprimierte Datei %s\n"
-               "        haben eine unterschiedliche Groesse.\n",
-               in_filename, hd_filename);
+        sprintf(error_buf + strlen(error_buf),
+                "Die Original-Datei %s und die dekomprimierte Datei %s\n"
+                "haben eine unterschiedliche Größe.",
+                in_filename, hd_filename);
         ok = false;
     }
     
@@ -180,23 +153,27 @@ bool ppr_tb_compare_filesizes(
 /* ---------------------------------------------------------------------------
  * Funktion: ppr_tb_compare_files
  * ------------------------------------------------------------------------- */
-bool ppr_tb_compare_files(char *in_filename, char *hd_filename)
-{      
+bool ppr_tb_compare_files(char *in_filename, char *hd_filename, char *error_buf)
+{
     bool ok;
     
     FILE *in_stream = fopen(in_filename, "rb");
     if (in_stream == NULL)
     {
-        printf("[ERROR] Die Datei %s konnte nicht geoeffnet werden.\n",
-               in_filename);
+        sprintf(error_buf,
+                "Die Datei %s konnte nicht geöffnet werden.",
+                in_filename);
+        
         exit(EXIT_FAILURE);
     }
 
     FILE *hd_stream = fopen(hd_filename, "rb");
     if (hd_stream == NULL)
     {
-        printf("[ERROR] Die Datei %s konnte nicht geoeffnet werden.\n",
-               hd_filename);
+        sprintf(error_buf,
+                "Die Datei %s konnte nicht geöffnet werden.",
+                hd_filename);
+        
         exit(EXIT_FAILURE);
     }
 
@@ -214,16 +191,18 @@ bool ppr_tb_compare_files(char *in_filename, char *hd_filename)
     if (char1 == EOF && char2 == EOF)
     {
         ok = true;
-        printf("[OK] Die Dateien %s und %s sind identisch.\n", 
+        printf("[OK] Die Dateien %s und %s sind identisch.\n",
                 in_filename, hd_filename);
     }
     else
     {
         ok = false;
-        printf("[ERROR] Die Dateien %s und %s sind NICHT identisch.\n"
-               "        Sie unterscheiden sich ab Position %d: "
-               "'%2x' - '%2x'\n",
-               in_filename, hd_filename, pos, (unsigned int) char1, (unsigned int) char2);
+      
+        sprintf(error_buf,
+                "Die Dateien %s und %s sind NICHT identisch.\n"
+                "        Sie unterscheiden sich ab Position %d: "
+                "'%2x' - '%2x'",
+                in_filename, hd_filename, pos, (unsigned int) char1, (unsigned int) char2);
     }
 
     fclose(in_stream);

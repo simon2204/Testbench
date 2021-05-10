@@ -1,6 +1,0 @@
-{
-    "id": 2,
-    "label": "Matrix (Blatt 2)",
-    "timeoutInMs": 2000,
-    "submissionExecutable": {"name": "submission-executable", "dependencies": "tests"},
-}

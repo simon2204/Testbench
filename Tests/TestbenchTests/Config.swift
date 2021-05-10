@@ -11,7 +11,6 @@ func createConfigJSON(
 -> String {
     """
     {
-        "testConfigFileName": "test-config.json",
         "workingDirectory": "\(workingDirectory)",
         "testSpecificationDirectory": "\(testSpecification)",
         "compiler": "/usr/bin/gcc",

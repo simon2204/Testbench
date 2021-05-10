@@ -1,6 +1,0 @@
-{
-    "id": 5,
-    "label": "Blocksatzformatierung (Blatt 5)",
-    "timeoutInMs": 2000,
-    "submissionExecutable": {"name": "submission-executable", "dependencies": "tests"},
-}

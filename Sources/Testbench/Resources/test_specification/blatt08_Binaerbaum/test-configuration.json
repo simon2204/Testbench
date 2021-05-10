@@ -1,6 +1,0 @@
-{
-    "id": 8,
-    "label": "Binärbaum (Blatt 8)",
-    "timeoutInMs": 2000,
-    "submissionExecutable": {"name": "submission-executable", "dependencies": "tests"},
-}

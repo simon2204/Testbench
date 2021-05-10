@@ -20,7 +20,9 @@ extension Process {
             deadlineHasPassed = true
         }
         
-        DispatchQueue.main.asyncAfter(deadline: deadline, execute: terminationTask)
+        DispatchQueue
+            .global(qos: .utility)
+            .asyncAfter(deadline: deadline, execute: terminationTask)
         
         self.waitUntilExit()
         

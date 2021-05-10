@@ -9,27 +9,19 @@ import Foundation
 import ZIPFoundation
 
 extension FileManager {
-    func items(at url: URL) -> [URL] {
-        guard let paths = try? contentsOfDirectory(atPath: url.path) else { return [] }
-        let items = paths.map(url.appendingPathComponent)
-        
-        var itemsAndAliases = [URL]()
-        
-        for item in items {
-            if let alias = try? URL(resolvingAliasFileAt: item) {
-                itemsAndAliases.append(alias)
-            } else {
-                itemsAndAliases.append(item)
-            }
-        }
-        
-        return itemsAndAliases
+    func items(at url: URL) throws -> [URL] {
+        let paths = try contentsOfDirectory(atPath: url.path)
+        let items = try paths.lazy
+            .map(url.appendingPathComponent)
+            .map { try URL(resolvingAliasFileAt: $0) }
+    
+        return items
     }
 }
 
 extension FileManager {
     func copyItems(at srcURL: URL, into dstURL: URL) throws {
-        let items = self.items(at: srcURL)
+        let items = try self.items(at: srcURL)
         
         for item in items {
             let dstItem = dstURL.appendingPathComponent(item.lastPathComponent)
@@ -46,12 +38,12 @@ extension FileManager {
 
 extension FileManager {
     func unzipItems(at url: URL) throws {
-        let zipped = zippedItems(at: url)
+        let zipped = try zippedItems(at: url)
         try zipped.forEach(unzipItem)
     }
     
-    private func zippedItems(at url: URL) -> [URL] {
-        let items = self.items(at: url)
+    private func zippedItems(at url: URL) throws -> [URL] {
+        let items = try self.items(at: url)
         return items.filter(FileManager.hasZIPPathExtension)
     }
     

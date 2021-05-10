@@ -1,6 +1,0 @@
-{
-    "id": 6,
-    "label": "HuffmanKommandozeile (Blatt 6)",
-    "timeoutInMs": 2000,
-    "submissionExecutable": {"name": "submission-executable", "dependencies": "tests"},
-}

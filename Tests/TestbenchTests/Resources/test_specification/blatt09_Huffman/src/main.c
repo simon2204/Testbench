@@ -21,11 +21,7 @@
  * ausgeklammert. 
  */
 #ifndef S_SPLINT_S
-#ifdef __unix__
 #include <sys/stat.h>
-#else
-#include <sys\stat.h>
-#endif
 #endif
 
 #include "huffman_common.h"

@@ -45,7 +45,7 @@ struct TestEnivronment {
             try FileManager.default.copyItems(
                 at: submission,
                 into: submissionBuild)
-        
+            
             try FileManager.default.unzipItems(at: submissionBuild)
             
             if let dependencies = self.submissionDependencies {
@@ -100,7 +100,7 @@ struct TestEnivronment {
     }
     
     func cleanUp() {
-//        try? FileManager.default.removeItem(at: destination)
+        try? FileManager.default.removeItem(at: destination)
     }
 }
 

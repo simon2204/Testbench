@@ -1,6 +1,0 @@
-{
-    "id": 7,
-    "label": "BinärerHeap (Blatt 7)",
-    "timeoutInMs": 2000,
-    "submissionExecutable": {"name": "submission-executable", "dependencies": "tests"},
-}

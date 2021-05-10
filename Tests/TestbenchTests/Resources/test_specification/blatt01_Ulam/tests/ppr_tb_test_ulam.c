@@ -74,49 +74,49 @@ void ppr_tb_test_ulam_max(void)
     printf("========================================================\n");
     
     /* ulam_max(-1) = -1 */
-    char *test_case1 = "Testfall 1 ulam_max: Ungueltiger Wert fuer Parameter a_0";
+    char *test_case1 = "Testfall 1 ulam_max: Ungültiger Wert für Parameter a_0";
     a0 = -1;
     expected = -1;
     result = ulam_max(a0);
     ppr_tb_assert_equal(test_case1, fct, a0, -2, expected, result, 1, 1, 18);
     
     /* ulam_max(0) = -1 */
-    char *test_case2 = "Testfall 2 ulam_max: Ungueltiger Wert fuer Parameter a_0";
+    char *test_case2 = "Testfall 2 ulam_max: Ungültiger Wert für Parameter a_0";
     a0 = 0;
     expected = -1;
     result = ulam_max(a0);
     ppr_tb_assert_equal(test_case2, fct, a0, -2, expected, result, 2, 1, 18);
     
     /* ulam_max(1) = 1 */
-    char *test_case3 = "Testfall 3 ulam_max: Gueltige Werte fuer Parameter a_0";
+    char *test_case3 = "Testfall 3 ulam_max: Gültige Werte für Parameter a_0";
     a0 = 1;
     expected = 1;
     result = ulam_max(a0);
     ppr_tb_assert_equal(test_case3, fct, a0, -2, expected, result, 3, 1, 18);
     
     /* ulam_max(2) = 2 */
-    char *test_case4 = "Testfall 4 ulam_max: Gueltige Werte fuer Parameter a_0";
+    char *test_case4 = "Testfall 4 ulam_max: Gültige Werte für Parameter a_0";
     a0 = 2;
     expected = 2;
     result = ulam_max(a0);
     ppr_tb_assert_equal(test_case4, fct, a0, -2, expected, result, 4, 1, 18);
     
     /* ulam_max(3) = 16 */
-    char *test_case5 = "Testfall 5 ulam_max: Gueltige Werte fuer Parameter a_0";
+    char *test_case5 = "Testfall 5 ulam_max: Gültige Werte für Parameter a_0";
     a0 = 3;
     expected = 16;
     result = ulam_max(a0);
     ppr_tb_assert_equal(test_case5, fct, a0, -2, expected, result, 5, 1, 18);
     
     /* ulam_max(4) = 4 */
-    char *test_case6 = "Testfall 6 ulam_max: Gueltige Werte fuer Parameter a_0";
+    char *test_case6 = "Testfall 6 ulam_max: Gültige Werte für Parameter a_0";
     a0 = 4;
     expected = 4;
     result = ulam_max(a0);
     ppr_tb_assert_equal(test_case6, fct, a0, -2, expected, result, 6, 1, 18);
     
     /* ulam_max(5) = 16 */
-    char *test_case7 = "Testfall 7 ulam_max: Gueltige Werte fuer Parameter a_0";
+    char *test_case7 = "Testfall 7 ulam_max: Gültige Werte für Parameter a_0";
     a0 = 5;
     expected = 16;
     result = ulam_max(a0);
@@ -139,21 +139,21 @@ void ppr_tb_test_ulam_twins(void)
     printf("========================================================\n");
     
     /* ulam_twins(0) = -1 */
-    char *test_case8 = "Testfall 8 ulam_twins: Ungueltiger Wert fuer Parameter limit";
+    char *test_case8 = "Testfall 8 ulam_twins: Ungültiger Wert für Parameter limit";
     limit = 0;
     expected = -1;
     result = ulam_twins(limit);
     ppr_tb_assert_equal(test_case8, fct, limit, -2, expected, result, 8, 2, 18);
     
     /* ulam_twins(5) = -1 */
-    char *test_case9 = "Testfall 9 ulam_twins: ULAM-Zwilling nicht vollstaendig im Intervall enthalten";
+    char *test_case9 = "Testfall 9 ulam_twins: ULAM-Zwilling nicht vollständig im Intervall enthalten";
     limit = 5;
     expected = -1;
     result = ulam_twins(limit);
     ppr_tb_assert_equal(test_case9, fct, limit, -2, expected, result, 9, 2, 18);
     
     /* ulam_twins(6) = 5 */
-    char *test_case10 = "Testfall 10 ulam_twins: Gueltige Werte fuer Parameter limit";
+    char *test_case10 = "Testfall 10 ulam_twins: Gültige Werte für Parameter limit";
     limit = 6;
     expected = 5;
     result = ulam_twins(limit);
@@ -177,7 +177,7 @@ void ppr_tb_test_ulam_multiples(void)
     printf("========================================================\n");
     
     /* ulam_multiples(0, 2) = -1 */
-    char *test_case11 = "Testfall 11 ulam_multiples: Ungueltiger Wert fuer Parameter limit";
+    char *test_case11 = "Testfall 11 ulam_multiples: Ungültiger Wert für Parameter limit";
     limit = 0;
     number = 2;
     expected = -1;
@@ -185,7 +185,7 @@ void ppr_tb_test_ulam_multiples(void)
     ppr_tb_assert_equal(test_case11, fct, limit, number, expected, result, 11, 3, 18);
     
     /* ulam_multiples(10, 0) = -1 */
-    char *test_case12 = "Testfall 12 ulam_multiples: Ungueltiger Wert fuer Parameter number";
+    char *test_case12 = "Testfall 12 ulam_multiples: Ungültiger Wert für Parameter number";
     limit = 10;
     number = 0;
     expected = -1;
@@ -193,7 +193,7 @@ void ppr_tb_test_ulam_multiples(void)
     ppr_tb_assert_equal(test_case12, fct, limit, number, expected, result, 12, 3, 18);
     
     /* ulam_multiples(5, 2) = -1 */
-    char *test_case13 = "Testfall 13 ulam_multiples: Mehrling fuer number=2 nicht vollstaendig im Intervall enthalten";
+    char *test_case13 = "Testfall 13 ulam_multiples: Mehrling für number=2 nicht vollständig im Intervall enthalten";
     limit = 5;
     number = 2;
     expected = -1;
@@ -201,7 +201,7 @@ void ppr_tb_test_ulam_multiples(void)
     ppr_tb_assert_equal(test_case13, fct, limit, number, expected, result, 13, 3, 18);
     
     /* ulam_multiples(109, 4) = -1 */
-    char *test_case14 = "Testfall 14 ulam_multiples: Mehrling fuer number=4 nicht vollstaendig im Intervall enthalten";
+    char *test_case14 = "Testfall 14 ulam_multiples: Mehrling für number=4 nicht vollständig im Intervall enthalten";
     limit = 109;
     number = 4;
     expected = -1;
@@ -209,7 +209,7 @@ void ppr_tb_test_ulam_multiples(void)
     ppr_tb_assert_equal(test_case14, fct, limit, number, expected, result, 14, 3, 18);
     
     /* ulam_multiples(110, 4) = 107 */
-    char *test_case15 = "Testfall 15 ulam_multiples: Gueltige Werte fuer Parameter limit und number";
+    char *test_case15 = "Testfall 15 ulam_multiples: Gültige Werte für Parameter limit und number";
     limit = 110;
     number = 4;
     expected = 107;
@@ -217,7 +217,7 @@ void ppr_tb_test_ulam_multiples(void)
     ppr_tb_assert_equal(test_case15, fct, limit, number, expected, result, 15, 3, 18);
     
     /* ulam_multiples(111, 4) = 108 */
-    char *test_case16 = "Testfall 16 ulam_multiples: Gueltige Werte fuer Parameter limit und number";
+    char *test_case16 = "Testfall 16 ulam_multiples: Gültige Werte für Parameter limit und number";
     limit = 111;
     number = 4;
     expected = 108;
@@ -225,7 +225,7 @@ void ppr_tb_test_ulam_multiples(void)
     ppr_tb_assert_equal(test_case16, fct, limit, number, expected, result, 16, 3, 18);
     
     /* ulam_multiples(1000, 2) = 982 */
-    char *test_case17 = "Testfall 17 ulam_multiples: Gueltige Werte fuer Parameter limit und number";
+    char *test_case17 = "Testfall 17 ulam_multiples: Gültige Werte für Parameter limit und number";
     limit = 1000;
     number = 2;
     expected = 982;
@@ -233,7 +233,7 @@ void ppr_tb_test_ulam_multiples(void)
     ppr_tb_assert_equal(test_case17, fct, limit, number, expected, result, 17, 3, 18);
     
     /* ulam_multiples(391, 2) = 386 */
-    char *test_case18 = "Testfall 18 ulam_multiples: Gueltige Werte fuer Parameter limit und number";
+    char *test_case18 = "Testfall 18 ulam_multiples: Gültige Werte für Parameter limit und number";
     limit = 391;
     number = 6;
     expected = 386;

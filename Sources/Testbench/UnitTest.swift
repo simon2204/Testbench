@@ -19,6 +19,7 @@ public struct UnitTest {
         let runTime: TimeInterval
     
         if let customExecutable = config.customTestExecutable {
+            let _ = try buildSubmissionExecutable(testEvironment)
             try buildCustomExecutable(testEvironment, customExecutable)
             runTime = try runCustomTasks(testEvironment)
         } else {
@@ -70,7 +71,7 @@ public struct UnitTest {
             .destination
             .appendingPathComponent(config.submissionExecutable.name)
         let submissionCompiler = Compiler(config.compiler)
-        let submissionBuildFiles = CFileManager.cFiles(at: testEvironment.submissionBuild)
+        let submissionBuildFiles = try CFileManager.cFiles(at: testEvironment.submissionBuild)
         let _ = try submissionCompiler.build(
             sourceFiles: submissionBuildFiles,
             destination: submissionDestination,
@@ -88,7 +89,7 @@ public struct UnitTest {
             .destination
             .appendingPathComponent(customExecutable.name)
         let customCompiler = Compiler(config.compiler)
-        let customBuildFiles = CFileManager.cFiles(at: testEvironment.customBuild)
+        let customBuildFiles = try CFileManager.cFiles(at: testEvironment.customBuild)
         let _ = try customCompiler.build(
             sourceFiles: customBuildFiles,
             destination: customDestination,

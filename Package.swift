@@ -15,8 +15,7 @@ let package = Package(
     targets: [
         .target(
             name: "Testbench",
-            dependencies: ["ZIPFoundation"],
-            resources: [.copy("Resources")]
+            dependencies: ["ZIPFoundation"]
         ),
         .testTarget(
             name: "TestbenchTests",

@@ -21,7 +21,7 @@ struct CFileManager {
     /// won't longer execute when the program starts.
     /// - Parameter url: The directory in which the ".c" files will be scanned.
     static func renameMainFunctions(at url: URL) throws {
-        let cFileURLs = cFiles(at: url)
+        let cFileURLs = try cFiles(at: url)
         
         for cFileURL in cFileURLs {
             let content = try String(contentsOf: cFileURL)
@@ -37,8 +37,8 @@ struct CFileManager {
         }
     }
     
-    static func cFiles(at url: URL) -> [URL] {
-        let urls = FileManager.default.items(at: url)
+    static func cFiles(at url: URL) throws -> [URL] {
+        let urls = try FileManager.default.items(at: url)
         return CFileManager.filterCFiles(from: urls)
     }
     
@@ -51,7 +51,7 @@ struct CFileManager {
     }
     
     static func containsMainFunction(in directory: URL) throws -> Bool {
-        let cFiles = cFiles(at: directory)
+        let cFiles = try cFiles(at: directory)
         return try containsMainFunction(at: cFiles)
     }
     

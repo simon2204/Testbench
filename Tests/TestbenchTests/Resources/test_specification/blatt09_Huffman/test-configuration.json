@@ -1,7 +1,7 @@
 {
     "id": 9,
     "label": "Huffman (Blatt 9)",
-    "timeoutInMs": 20000,
+    "timeoutInMs": 5000,
     "sharedResources": "testfiles",
     "submissionExecutable": {"name": "submission-executable"},
     "customTestExecutable": {
@@ -19,7 +19,7 @@
         },
         {
             "executableName":"test-executable",
-            "commandLineArguments": ["01_in.txt", "01_in.txt.hc", "01_out.txt", "1", "1", "10"]
+            "commandLineArguments": ["01_in.txt", "01_in.txt.hc", "01_out.txt", "1", "1", "10", "Testfall 1: Einfacher Test mit längerem Text"]
         },
         
         {
@@ -32,7 +32,7 @@
         },
         {
             "executableName":"test-executable",
-            "commandLineArguments": ["02_ab.txt", "02_ab.txt.hc", "02_ab.txt.hc.hd", "2", "1", "10"]
+            "commandLineArguments": ["02_ab.txt", "02_ab.txt.hc", "02_ab.txt.hc.hd", "2", "1", "10", "Testfall 2: Kurzer Test"]
         },
         
         {
@@ -45,7 +45,7 @@
         },
         {
             "executableName":"test-executable",
-            "commandLineArguments": ["03_leere.txt", "03_leerecompress.txt", "03_auchleer.txt", "3", "1", "10"]
+            "commandLineArguments": ["03_leere.txt", "03_leerecompress.txt", "03_auchleer.txt", "3", "1", "10", "Testfall 3: Test mit leerer Datei"]
         },
         
         {
@@ -58,7 +58,7 @@
         },
         {
             "executableName":"test-executable",
-            "commandLineArguments": ["04_1Byte.txt", "04_1Byte.txt.hc", "04_1Byte.txt.hc.hd", "4", "1", "10"]
+            "commandLineArguments": ["04_1Byte.txt", "04_1Byte.txt.hc", "04_1Byte.txt.hc.hd", "4", "1", "10", "Testfall 4: Test mit Datei mit 1 Byte"]
         },
         
         {
@@ -71,7 +71,7 @@
         },
         {
             "executableName":"test-executable",
-            "commandLineArguments": ["05_0-255.txt", "05_0-255.txt.hc", "05_0-255.txt.hc.hd", "5", "1", "10"]
+            "commandLineArguments": ["05_0-255.txt", "05_0-255.txt.hc", "05_0-255.txt.hc.hd", "5", "1", "10", "Testfall 5: Test mit allen 256 ASCII Zeichen"]
         },
         
         {
@@ -84,7 +84,7 @@
         },
         {
             "executableName":"test-executable",
-            "commandLineArguments": ["06_8Nutzbits.txt", "06_8NutzbitsComp.txt", "06_8NutzbitsDecomp.txt", "6", "1", "10"]
+            "commandLineArguments": ["06_8Nutzbits.txt", "06_8NutzbitsComp.txt", "06_8NutzbitsDecomp.txt", "6", "1", "10", "Testfall 6: Kurzer Test mit 8 Nutzbits im letzten Byte"]
         },
         
         {
@@ -97,7 +97,7 @@
         },
         {
             "executableName":"test-executable",
-            "commandLineArguments": ["07_in8Bits.txt", "07_in8Bits.txt.hc", "07_in8Bits.txt.hc.hd", "7", "1", "10"]
+            "commandLineArguments": ["07_in8Bits.txt", "07_in8Bits.txt.hc", "07_in8Bits.txt.hc.hd", "7", "1", "10", "Testfall 7: Langer Text mit 8 Nutzbits im letzten Byte"]
         },
         
         {
@@ -110,7 +110,7 @@
         },
         {
             "executableName":"test-executable",
-            "commandLineArguments": ["08_splint.bin", "08_splint.bin.hc", "08_splint.bin.hc.hd", "8", "1", "10"]
+            "commandLineArguments": ["08_splint.bin", "08_splint.bin.hc", "08_splint.bin.hc.hd", "8", "1", "10", "Testfall 8: Test mit großer Binär-Datei (1.4MB)"]
         },
         
         {
@@ -123,7 +123,7 @@
         },
         {
             "executableName":"test-executable",
-            "commandLineArguments": ["09_LordOfTheRings.txt", "09_LordOfTheRings.txt.hc", "09_LordOfTheRings.txt.hc.hd", "9", "1", "10"]
+            "commandLineArguments": ["09_LordOfTheRings.txt", "09_LordOfTheRings.txt.hc", "09_LordOfTheRings.txt.hc.hd", "9", "1", "10", "Testfall 9: The Lord Of The Rings (ca 2.6MB)"]
         },
         
         {
@@ -136,7 +136,7 @@
         },
         {
             "executableName":"test-executable",
-            "commandLineArguments": ["10_in.txt", "10_in.txt.hc", "10_in.txt.hc.hd", "10", "1", "10"]
+            "commandLineArguments": ["10_in.txt", "10_in.txt.hc", "10_in.txt.hc.hd", "10", "1", "10", "Testfall 10: Test ohne Angabe der Ausgabedatei"]
         }
     ]
 }

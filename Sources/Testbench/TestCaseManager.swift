@@ -33,7 +33,6 @@ struct TestCaseManager {
         
         return TestCase(
             _testConfigURL: testConfigURL,
-            assignment: assignment,
             globalConfig: config,
             config: testConfig)
     }

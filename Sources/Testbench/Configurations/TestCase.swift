@@ -13,8 +13,6 @@ struct TestCase {
     /// `URL` to the test configuration.
     let _testConfigURL: URL
     
-    let assignment: Assignment
-    
     let globalConfig: GlobalConfig
     /// Config from the test configuration.
     let config: TestConfig
@@ -60,7 +58,7 @@ struct TestCase {
     
     public var customTestExecutable: Executable? {
         Executable(
-            executable: config.customTestExecutable,
+            executable: config.customExecutable,
             testConfigURL: _testConfigURL,
             buildOptions: globalConfig.buildOptions
         )

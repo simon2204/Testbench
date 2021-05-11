@@ -23,7 +23,7 @@ struct TestConfig: Identifiable, Codable {
     
     public let submissionExecutable: Executable?
     
-    public let customTestExecutable: Executable?
+    public let customExecutable: Executable?
     
     public let tasks: [Process]?
 }

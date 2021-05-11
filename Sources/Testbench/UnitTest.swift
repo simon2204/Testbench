@@ -8,7 +8,7 @@
 import Foundation
 
 public struct UnitTest {
-    private static let testbenchLogJSON = "ppr_tb_asserts_json.log"
+    private static let assertsJsonLog = "ppr_tb_asserts_json.log"
     
     private let config: TestCase
     private let submission: URL
@@ -24,8 +24,7 @@ public struct UnitTest {
     
     public func performTests() throws -> TestResult {
         let runTime = try executeTests()
-        
-        let logfile = testEnvironment.getItem(withName: UnitTest.testbenchLogJSON)
+        let logfile = testEnvironment.getItem(withName: UnitTest.assertsJsonLog)
         
         var result = try TestResult.fromLogfile(logfile)
         result.runTime = runTime

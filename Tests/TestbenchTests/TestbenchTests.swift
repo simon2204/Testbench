@@ -70,30 +70,26 @@ final class TestbenchTests: XCTestCase {
     
 
     func testUlamDoesNotCompile() throws {
-        var thrownError: Error?
-
         let ulamDoesNotCompile = TestbenchTests
             .submission
             .appendingPathComponent("ulam")
             .appendingPathComponent("doesNotCompile")
 
         let testbench = Testbench(config: TestbenchTests.configJSONURL)
-
-        XCTAssertThrowsError(try testbench.performTests(
-                                submission: ulamDoesNotCompile,
-                                assignment: 1))
-        {
-            thrownError = $0
-        }
-
-        XCTAssertTrue(thrownError is Compiler.CompileError)
-        XCTAssertEqual(thrownError as? Compiler.CompileError, .didNotCompile(status: 1))
+        
+        let testResult = try testbench.performTests(
+            submission: ulamDoesNotCompile,
+            assignment: 1)
+        
+        XCTAssertNil(testResult.runTime)
+        
+        let errorMsg = try XCTUnwrap(testResult.errorMsg)
+        
+        XCTAssert(!errorMsg.isEmpty)
     }
     
 
     func testUlamInfiniteLoop() throws {
-        var thrownError: Error?
-
         let ulamInfiniteLoop = TestbenchTests
             .submission
             .appendingPathComponent("ulam")
@@ -101,26 +97,19 @@ final class TestbenchTests: XCTestCase {
         
         let testbench = Testbench(config: TestbenchTests.configJSONURL)
 
-        let timeoutInSeconds = Double(2000) / 1_000
-
-        XCTAssertThrowsError(try testbench.performTests(
-                                submission: ulamInfiniteLoop,
-                                assignment: 1))
-        {
-            thrownError = $0
-        }
-
-        XCTAssertTrue(thrownError is Compiler.CompileError)
-        XCTAssertEqual(
-            thrownError as? Compiler.CompileError,
-            .runTimeExceeded(seconds: timeoutInSeconds)
-        )
+        let testResult = try testbench.performTests(
+            submission: ulamInfiniteLoop,
+            assignment: 1)
+        
+        let errorMsg = try XCTUnwrap(testResult.errorMsg)
+        
+        XCTAssertNil(testResult.runTime)
+        
+        XCTAssertEqual(errorMsg, "Die maximale Laufzeit des Programmes von 2.0 Sekunden wurde überschritten.")
     }
     
 
     func testUlamProgramCrash() throws {
-        var thrownError: Error?
-
         let ulamProgramCrash = TestbenchTests
             .submission
             .appendingPathComponent("ulam")
@@ -128,15 +117,13 @@ final class TestbenchTests: XCTestCase {
 
         let testbench = Testbench(config: TestbenchTests.configJSONURL)
         
-        XCTAssertThrowsError(try testbench.performTests(
-                                submission: ulamProgramCrash,
-                                assignment: 1))
-        {
-            thrownError = $0
-        }
-
-        XCTAssertTrue(thrownError is Compiler.CompileError)
-        XCTAssertEqual(thrownError as? Compiler.CompileError, .uncaughtSignal(status: 11))
+        let testResult = try testbench.performTests(
+            submission: ulamProgramCrash,
+            assignment: 1)
+        
+        let errorMsg = try XCTUnwrap(testResult.errorMsg)
+        
+        XCTAssertEqual(errorMsg, "Das Programm beendete sich mit Statuscode 11.")
     }
 
     

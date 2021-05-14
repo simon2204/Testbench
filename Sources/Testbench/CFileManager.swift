@@ -13,9 +13,8 @@ struct CFileManager {
     
     private static let invalidMainFuncName = "int ____main("
     
-    private static var mainFuncRegex: NSRegularExpression {
-        return try! NSRegularExpression(pattern: CFileManager.mainFuncPattern)
-    }
+    private static let mainFuncRegex =
+        try! NSRegularExpression(pattern: CFileManager.mainFuncPattern)
     
     /// Performs a shallow search for all ".c" files and renames all "main" functions, so the original "main" functions
     /// won't longer execute when the program starts.

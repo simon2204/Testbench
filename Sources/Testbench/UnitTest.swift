@@ -12,22 +12,40 @@ public struct UnitTest {
     
     private let config: TestCase
     private let submission: URL
-    private let compiler: Compiler
+    private let compiler: CProcessManager
     private let testEnvironment: TestEnivronment
     
     init(config: TestCase, submission: URL) throws {
         self.config = config
         self.submission = submission
-        self.compiler = Compiler(config.compiler)
+        self.compiler = CProcessManager(config.compiler)
         self.testEnvironment = try TestEnivronment(config: config, submission: submission)
     }
     
     public func performTests() throws -> TestResult {
-        let runTime = try executeTests()
-        let logfile = testEnvironment.getItem(withName: UnitTest.assertsJsonLog)
         
-        var result = try TestResult.fromLogfile(logfile)
+        var result = TestResult()
+        var runTime: TimeInterval?
+        var errorMsg: String?
+        
+        do {
+            runTime = try executeTests()
+        } catch CProcessManager.ProcessError.runTimeExceeded(seconds: let seconds) {
+            errorMsg = "Die maximale Laufzeit des Programmes von \(seconds) Sekunden wurde überschritten."
+        } catch CProcessManager.ProcessError.didNotCompile(status: let status, description: let description) {
+            errorMsg = "Das Programm beendete sich mit Statuscode \(status)."
+            if !description.isEmpty { errorMsg?.append("\n\n\(description)") }
+        } catch CProcessManager.ProcessError.uncaughtSignal(status: let status, description: let description) {
+            errorMsg = "Das Programm beendete sich mit Statuscode \(status)."
+            if !description.isEmpty { errorMsg?.append("\n\n\(description)") }
+        }
+        
+        if let logfile = try? testEnvironment.getItem(withName: UnitTest.assertsJsonLog) {
+            result = try TestResult(from: logfile)
+        }
+        
         result.runTime = runTime
+        result.errorMsg = errorMsg
 
         return result
     }
@@ -65,7 +83,7 @@ public struct UnitTest {
     }
     
     private func runCustomTask(_ task: TestCase.Process) throws -> TimeInterval {
-        let process = self.testEnvironment
+        let process = try self.testEnvironment
             .getItem(withName: task.executableName)
         
         return try compiler.run(
@@ -96,7 +114,7 @@ public struct UnitTest {
                                  fromSourceFiles files: [URL]) throws -> URL
     {
         let destination = testEnvironment
-            .getItem(withName: executable.name)
+            .appendingPathCompotent(executable.name)
         
         let _ = try compiler.build(
             sourceFiles: files,

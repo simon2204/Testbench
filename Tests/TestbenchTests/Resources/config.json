@@ -1,6 +1,6 @@
 {
-    "workingDirectory": "/Users/Simon/Desktop/TestbenchDirectories/working_directory",
-    "testSpecificationDirectory": "/Users/Simon/Desktop/TestbenchDirectories/test_specification",
+    "workingDirectory": "/home/TestbenchDirectories/working_directory",
+    "testSpecificationDirectory": "/home/TestbenchDirectories/test_specification",
     "compiler": "/usr/bin/gcc",
     "buildOptions": ["-O", "-Wall"],
     "assignments": [

@@ -9,7 +9,8 @@ import Foundation
 
 public struct TestResult: Codable {
     public private(set) var entries: [LogfileEntry] = []
-    public var runTime: TimeInterval = .infinity
+    public var runTime: TimeInterval?
+    public var errorMsg: String?
     
     public struct LogfileEntry: Codable {
         public let id: Int
@@ -23,10 +24,8 @@ public struct TestResult: Codable {
 }
 
 extension TestResult {
-    static func fromLogfile(_ logfile: URL) throws -> TestResult {
+    init(from logfile: URL) throws {
         let decoder = JSONDecoder()
-        
-        var testResult = TestResult()
         
         // read in the logdata from a local file
         let logdata = try String(contentsOf: logfile, encoding: .utf8)
@@ -35,12 +34,10 @@ extension TestResult {
         let lines = logdata.components(separatedBy: .newlines)
         
         for line in lines {
-            guard let data = dataFromLine(line) else { continue }
+            guard let data = Self.dataFromLine(line) else { continue }
             let logfileEntry = try decoder.decode(LogfileEntry.self, from: data)
-            testResult.append(entry: logfileEntry)
+            self.append(entry: logfileEntry)
         }
-        
-        return testResult
     }
     
     private static func dataFromLine(_ line: String) -> Data? {

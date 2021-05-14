@@ -112,8 +112,16 @@ final class TestEnivronment {
         try CFileManager.cFiles(at: submissionBuild)
     }
     
-    func getItem(withName name: String) -> URL {
-        self.destination.appendingPathComponent(name)
+    func getItem(withName name: String) throws -> URL {
+        let item = destination.appendingPathComponent(name)
+        guard FileManager.default.fileExists(atPath: item.path) else {
+            throw TestEnivronmentError.noSuchItem(withName: name)
+        }
+        return item
+    }
+    
+    func appendingPathCompotent(_ pathComponent: String) -> URL {
+        destination.appendingPathComponent(pathComponent)
     }
     
     private func cleanUp() {
@@ -128,5 +136,6 @@ final class TestEnivronment {
 extension TestEnivronment {
     enum TestEnivronmentError: Error {
         case couldNotChangeCurrentDirectory
+        case noSuchItem(withName: String)
     }
 }

@@ -29,7 +29,8 @@
  */
 #define ASSERT_FILENAME "ppr_tb_asserts_json.log"
 
-#define JSON_FORMAT "{\"id\": %d, \"groupId\": %d, \"info\": \"%s\", \"expected\": \"%s\", \"actual\": \"%s\", \"error\": \"%s\", \"total\": %d}\n"
+#define JSON_FORMAT "{\"id\": %d, \"groupId\": %d, \"info\": \"%s\", \
+\"expected\": \"%s\", \"actual\": \"%s\", \"error\": \"%s\", \"total\": %d}\n"
 
 #define REPLACE "\n"
 

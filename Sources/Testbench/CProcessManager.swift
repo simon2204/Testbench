@@ -1,5 +1,5 @@
 //
-//  Compiler.swift
+//  CProcessManager.swift
 //  
 //
 //  Created by Simon Schöpke on 21.04.21.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Compiler {
+struct CProcessManager {
     let compiler: URL
     
     init(_ compiler: URL) {
@@ -24,7 +24,7 @@ struct Compiler {
         let outputFile = "\(destination.path)"
         let buildArguments = sourceFilePaths + options + [outputOption, outputFile]
         
-        let secondsNeeded = try Compiler.measureExecutionTime {
+        let secondsNeeded = try CProcessManager.measureExecutionTime {
             try runBuildProcess(withArgs: buildArguments)
         }
         
@@ -37,16 +37,28 @@ struct Compiler {
         arguments: [String],
         deadline: DispatchTimeInterval) throws -> TimeInterval {
         
-        let secondsNeeded = try Compiler.measureExecutionTime {
-            let task = try Process.run(process, arguments: arguments)
+        let pipe = Pipe()
+        let task = Process()
+        
+        task.executableURL = process
+        task.arguments = arguments
+        task.standardOutput = pipe
+        
+        let secondsNeeded = try CProcessManager.measureExecutionTime {
+            try task.run()
+        
             let deadlineHasPassed = task.waitUntilExit(deadline: .now() + deadline)
             
             if deadlineHasPassed {
-                throw CompileError.runTimeExceeded(seconds: deadline.seconds)
+                throw ProcessError.runTimeExceeded(seconds: deadline.seconds)
             }
             
             guard task.terminationReason == .exit else {
-                throw CompileError.uncaughtSignal(status: task.terminationStatus)
+                let stdError = StdError(pipe: pipe)
+  
+                throw ProcessError.uncaughtSignal(
+                    status: task.terminationStatus,
+                    description: stdError.description)
             }
         }
         
@@ -54,15 +66,28 @@ struct Compiler {
     }
     
     private func runBuildProcess(withArgs arguments: [String]) throws {
-        let task = try Process.run(compiler, arguments: arguments)
+        let pipe = Pipe()
+        let task = Process()
+        
+        task.executableURL = compiler
+        task.arguments = arguments
+        task.standardError = pipe
+        
+        try task.run()
+        
         task.waitUntilExit()
+        
         guard task.terminationStatus == 0 else {
-            throw CompileError.didNotCompile(status: task.terminationStatus)
+            let stdError = StdError(pipe: pipe)
+  
+            throw ProcessError.didNotCompile(
+                status: task.terminationStatus,
+                description: stdError.description)
         }
     }
 }
 
-extension Compiler {
+extension CProcessManager {
     private static func measureExecutionTime(task: () throws -> Void) rethrows -> TimeInterval {
         let start = DispatchTime.now()
         try task()
@@ -73,11 +98,21 @@ extension Compiler {
     }
 }
 
-extension Compiler {
-    enum CompileError: Error, Equatable {
+extension CProcessManager {
+    enum ProcessError: Error, Equatable {
         case buildTimeExceeded(seconds: TimeInterval)
         case runTimeExceeded(seconds: TimeInterval)
-        case didNotCompile(status: Int32)
-        case uncaughtSignal(status: Int32)
+        case didNotCompile(status: Int32, description: String)
+        case uncaughtSignal(status: Int32, description: String)
+    }
+}
+
+struct StdError: Equatable, CustomStringConvertible {
+    let description: String
+    
+    init(pipe: Pipe) {
+        let errData = pipe.fileHandleForReading.readDataToEndOfFile()
+        self.description = String(data: errData, encoding: .utf8)?
+            .trimmingCharacters(in: .newlines) ?? ""
     }
 }

@@ -17,7 +17,7 @@ extension FileManager {
                 .map(url.appendingPathComponent)
                 .map { try URL(resolvingAliasFileAt: $0) }
         #else
-        let items = try paths
+        let items = paths
                 .map(url.appendingPathComponent)
         #endif
 

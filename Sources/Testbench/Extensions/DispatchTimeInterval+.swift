@@ -20,7 +20,7 @@ extension DispatchTimeInterval {
             return Double(nanoseconds) / 1_000_000_000
         case .never:
             return .infinity
-        @unknown default:
+        default:
             return 0
         }
     }

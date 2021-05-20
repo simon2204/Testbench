@@ -28,7 +28,6 @@ public struct UnitTest {
         var runTime: TimeInterval?
         var errorMsg: String?
         
-        
         do {
             runTime = try executeTests()
         } catch CProcessManager.ProcessError.runTimeExceeded(seconds: let seconds) {
@@ -47,6 +46,7 @@ public struct UnitTest {
         
         result.runTime = runTime
         result.errorMsg = errorMsg
+        result.name = config.label
 
         return result
     }

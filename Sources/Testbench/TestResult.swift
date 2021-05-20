@@ -12,6 +12,7 @@ public struct TestResult: Codable {
     public var runTime: TimeInterval?
     public var errorMsg: String?
     public var date: String
+    public var name: String!
     
     init() {
         let now = Date()
@@ -19,7 +20,7 @@ public struct TestResult: Codable {
             .localizedString(
                 from: now,
                 dateStyle: .full,
-                timeStyle: .full)
+                timeStyle: .long)
         self.date = localizedDate
     }
     

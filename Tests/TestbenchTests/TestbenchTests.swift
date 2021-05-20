@@ -66,6 +66,8 @@ final class TestbenchTests: XCTestCase {
         XCTAssert(!result.entries.isEmpty)
         result.entries.forEach { XCTAssert($0.error.isEmpty) }
         result.entries.forEach { XCTAssert($0.expected == $0.actual) }
+        
+        print(result.date)
     }
     
 

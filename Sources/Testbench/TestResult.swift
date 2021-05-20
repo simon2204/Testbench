@@ -11,6 +11,17 @@ public struct TestResult: Codable {
     public private(set) var entries: [LogfileEntry] = []
     public var runTime: TimeInterval?
     public var errorMsg: String?
+    public var date: String
+    
+    init() {
+        let now = Date()
+        let localizedDate = DateFormatter
+            .localizedString(
+                from: now,
+                dateStyle: .full,
+                timeStyle: .full)
+        self.date = localizedDate
+    }
     
     public struct LogfileEntry: Codable {
         public let id: Int
@@ -26,6 +37,7 @@ public struct TestResult: Codable {
 extension TestResult {
     init(from logfile: URL) throws {
         let decoder = JSONDecoder()
+        self.init()
         
         // read in the logdata from a local file
         let logdata = try String(contentsOf: logfile, encoding: .utf8)

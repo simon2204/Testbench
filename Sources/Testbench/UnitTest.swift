@@ -28,6 +28,7 @@ public struct UnitTest {
         var runTime: TimeInterval?
         var errorMsg: String?
         
+        
         do {
             runTime = try executeTests()
         } catch CProcessManager.ProcessError.runTimeExceeded(seconds: let seconds) {
@@ -110,8 +111,10 @@ public struct UnitTest {
         return true
     }
     
-    private func buildExecutable(_ executable: TestCase.Executable,
-                                 fromSourceFiles files: [URL]) throws -> URL
+    private func buildExecutable(
+        _ executable: TestCase.Executable,
+        fromSourceFiles files: [URL])
+    throws -> URL
     {
         let destination = testEnvironment
             .appendingPathCompotent(executable.name)

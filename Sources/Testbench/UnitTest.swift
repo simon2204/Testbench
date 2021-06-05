@@ -8,17 +8,19 @@
 import Foundation
 
 public struct UnitTest {
+    typealias ProcessResult = CProcessManager.ProcessResult
+    
     private static let assertsJsonLog = "ppr_tb_asserts_json.log"
     
     private let config: TestCase
     private let submission: URL
-    private let compiler: CProcessManager
+    private let processManager: CProcessManager
     private let testEnvironment: TestEnivronment
     
     init(config: TestCase, submission: URL) throws {
         self.config = config
         self.submission = submission
-        self.compiler = CProcessManager(config.compiler)
+        self.processManager = CProcessManager(config.compiler)
         self.testEnvironment = try TestEnivronment(config: config, submission: submission)
     }
     
@@ -28,16 +30,11 @@ public struct UnitTest {
         var runTime: TimeInterval?
         var errorMsg: String?
         
-        do {
-            runTime = try executeTests()
-        } catch CProcessManager.ProcessError.runTimeExceeded(seconds: let seconds) {
-            errorMsg = "Die maximale Laufzeit des Programmes von \(seconds) Sekunden wurde überschritten."
-        } catch CProcessManager.ProcessError.didNotCompile(status: let status, description: let description) {
-            errorMsg = "Das Programm beendete sich mit Statuscode \(status)."
-            if !description.isEmpty { errorMsg?.append("\n\n\(description)") }
-        } catch CProcessManager.ProcessError.uncaughtSignal(status: let status, description: let description) {
-            errorMsg = "Das Programm beendete sich mit Statuscode \(status)."
-            if !description.isEmpty { errorMsg?.append("\n\n\(description)") }
+        let processResult = try executeTests()
+        
+        switch processResult {
+        case .timeNeeded(seconds: let seconds): runTime = seconds
+        case .error(let error): errorMsg = error.description
         }
         
         if let logfile = try? testEnvironment.getItem(withName: UnitTest.assertsJsonLog) {
@@ -51,7 +48,7 @@ public struct UnitTest {
         return result
     }
     
-    private func executeTests() throws -> TimeInterval {
+    private func executeTests() throws -> ProcessResult {
         let canBuildCustomExecutable = try buildCustomExecutable()
         
         if canBuildCustomExecutable {
@@ -61,10 +58,10 @@ public struct UnitTest {
         }
     }
     
-    private func runSubmissionExecutable() throws -> TimeInterval {
+    private func runSubmissionExecutable() throws -> ProcessResult {
         let executable = try buildSubmissionExecutable()
         
-        let runTime = try compiler.run(
+        let runTime = try processManager.run(
             process: executable,
             arguments: [],
             deadline: config.timeout)
@@ -72,22 +69,30 @@ public struct UnitTest {
         return runTime
     }
     
-    private func runCustomTasks() throws -> TimeInterval {
+    private func runCustomTasks() throws -> ProcessResult {
         let _ = try buildSubmissionExecutable()
+        let zeroBuildTime = ProcessResult.timeNeeded(seconds: 0)
         
-        let totalRunTime = try config.tasks.reduce(0.0) { partialRunTime, task in
-            let runTime = try runCustomTask(task)
-            return runTime + partialRunTime
+        let processResult = try config.tasks.reduce(zeroBuildTime) { partialResult, task in
+            let result = try runCustomTask(task)
+            
+            if case let .timeNeeded(seconds: runTime) = result,
+               case let .timeNeeded(seconds: partialRuntime) = partialResult
+            {
+                return .timeNeeded(seconds: runTime + partialRuntime)
+            }
+            
+            return partialResult
         }
         
-        return totalRunTime
+        return processResult
     }
     
-    private func runCustomTask(_ task: TestCase.Process) throws -> TimeInterval {
+    private func runCustomTask(_ task: TestCase.Process) throws -> ProcessResult {
         let process = try self.testEnvironment
             .getItem(withName: task.executableName)
         
-        return try compiler.run(
+        return try processManager.run(
             process: process,
             arguments: task.commandLineArguments,
             deadline: config.timeout)
@@ -119,7 +124,7 @@ public struct UnitTest {
         let destination = testEnvironment
             .appendingPathCompotent(executable.name)
         
-        let _ = try compiler.build(
+        let _ = try processManager.build(
             sourceFiles: files,
             destination: destination,
             options: executable.buildOptions)

@@ -17,25 +17,25 @@ struct CProcessManager {
     func build(
         sourceFiles: [URL],
         destination: URL,
-        options: [String]) throws -> TimeInterval {
+        options: [String]) throws -> ProcessResult {
 
         let sourceFilePaths = sourceFiles.map(\.path)
         let outputOption = "-o"
         let outputFile = "\(destination.path)"
         let buildArguments = sourceFilePaths + options + [outputOption, outputFile]
         
-        let secondsNeeded = try CProcessManager.measureExecutionTime {
+        let result = try CProcessManager.measureExecutionTime {
             try runBuildProcess(withArgs: buildArguments)
         }
         
-        return secondsNeeded
+        return result
     }
     
     
     func run(
         process: URL,
         arguments: [String],
-        deadline: DispatchTimeInterval) throws -> TimeInterval {
+        deadline: DispatchTimeInterval) throws -> ProcessResult {
         
         let pipe = Pipe()
         let task = Process()
@@ -44,28 +44,30 @@ struct CProcessManager {
         task.arguments = arguments
         task.standardOutput = pipe
         
-        let secondsNeeded = try CProcessManager.measureExecutionTime {
+        let result = try CProcessManager.measureExecutionTime {
             try task.run()
         
             let deadlineHasPassed = task.waitUntilExit(deadline: .now() + deadline)
             
             if deadlineHasPassed {
-                throw ProcessError.runTimeExceeded(seconds: deadline.seconds)
+                return ProcessResult
+                    .error(.runTimeExceeded(seconds: deadline.seconds))
             }
             
             guard task.terminationReason == .exit else {
-                let stdError = StdError(pipe: pipe)
-  
-                throw ProcessError.uncaughtSignal(
-                    status: task.terminationStatus,
-                    description: stdError.description)
+                return ProcessResult
+                    .error(.uncaughtSignal(
+                            status: task.terminationStatus,
+                            description: pipe.errorDescription))
             }
+            
+            return nil
         }
         
-        return secondsNeeded
+        return result
     }
     
-    private func runBuildProcess(withArgs arguments: [String]) throws {
+    private func runBuildProcess(withArgs arguments: [String]) throws -> ProcessResult? {
         let pipe = Pipe()
         let task = Process()
         
@@ -78,41 +80,61 @@ struct CProcessManager {
         task.waitUntilExit()
         
         guard task.terminationStatus == 0 else {
-            let stdError = StdError(pipe: pipe)
-  
-            throw ProcessError.didNotCompile(
-                status: task.terminationStatus,
-                description: stdError.description)
+            return ProcessResult
+                .error(.didNotCompile(
+                        status: task.terminationStatus,
+                        description: pipe.errorDescription))
         }
+        
+        return nil
     }
 }
 
 extension CProcessManager {
-    private static func measureExecutionTime(task: () throws -> Void) rethrows -> TimeInterval {
+    private static func measureExecutionTime(task: () throws -> ProcessResult?) rethrows -> ProcessResult {
         let start = DispatchTime.now()
-        try task()
+        if let result = try task() { return result }
         let end = DispatchTime.now()
-        let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds
-        let timeInterval = Double(nanoTime) / 1_000_000_000
-        return timeInterval
+        
+        let timeNeeded = end.uptimeNanoseconds - start.uptimeNanoseconds
+        let timeNeededInSeconds = Double(timeNeeded) / 1_000_000_000
+        
+        return .timeNeeded(seconds: timeNeededInSeconds)
     }
 }
 
 extension CProcessManager {
-    enum ProcessError: Error, Equatable {
-        case buildTimeExceeded(seconds: TimeInterval)
-        case runTimeExceeded(seconds: TimeInterval)
-        case didNotCompile(status: Int32, description: String)
-        case uncaughtSignal(status: Int32, description: String)
-    }
-}
-
-struct StdError: Equatable, CustomStringConvertible {
-    let description: String
+    enum ProcessResult: Equatable {
+        case timeNeeded(seconds: TimeInterval)
+        case error(ResultError)
     
-    init(pipe: Pipe) {
-        let errData = pipe.fileHandleForReading.readDataToEndOfFile()
-        self.description = String(data: errData, encoding: .utf8)?
-            .trimmingCharacters(in: .newlines) ?? ""
+        enum ResultError: Error, Equatable {
+            case buildTimeExceeded(seconds: TimeInterval)
+            case runTimeExceeded(seconds: TimeInterval)
+            case didNotCompile(status: Int32, description: String)
+            case uncaughtSignal(status: Int32, description: String)
+            
+            var description: String {
+                var errorMsg: String
+                
+                switch self {
+                case .buildTimeExceeded(seconds: let seconds):
+                    errorMsg = "Die maximale Zeit zum Erstellen des Programmes von \(seconds) Sekunden wurde überschritten."
+                    
+                case .runTimeExceeded(seconds: let seconds):
+                    errorMsg = "Die maximale Laufzeit des Programmes von \(seconds) Sekunden wurde überschritten."
+                    
+                case .didNotCompile(status: let status, description: let description):
+                    errorMsg = "Das Programm konnte nicht kompiliert werden und warf Statuscode \(status)."
+                    if !description.isEmpty { errorMsg.append("\n\n\(description)") }
+                    
+                case .uncaughtSignal(status: let status, description: let description):
+                    errorMsg = "Das Programm beendete sich mit Statuscode \(status)."
+                    if !description.isEmpty { errorMsg.append("\n\n\(description)") }
+                }
+                
+                return errorMsg
+            }
+        }
     }
 }

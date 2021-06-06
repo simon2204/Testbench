@@ -107,7 +107,7 @@ final class TestbenchTests: XCTestCase {
         
         XCTAssertNil(testResult.runTime)
         
-        XCTAssertEqual(errorMsg, "Die maximale Laufzeit des Programmes von 2.0 Sekunden wurde überschritten.")
+        XCTAssertEqual(errorMsg, "Die maximale Laufzeit des Programmes von 10.0 Sekunden wurde überschritten.")
     }
     
 

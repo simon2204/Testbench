@@ -1,6 +1,6 @@
 {
     "id": 1,
     "label": "Ulam (Blatt 1)",
-    "timeoutInMs": 2000,
+    "timeoutInMs": 10000,
     "submissionExecutable": {"name": "submission-executable", "dependencies": "tests"}
 }

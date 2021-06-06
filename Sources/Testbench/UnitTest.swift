@@ -8,33 +8,29 @@
 import Foundation
 
 public struct UnitTest {
-    typealias ProcessResult = CProcessManager.ProcessResult
-    
     private static let assertsJsonLog = "ppr_tb_asserts_json.log"
     
     private let config: TestCase
     private let submission: URL
-    private let processManager: CProcessManager
+    private let compiler: Compiler
     private let testEnvironment: TestEnivronment
     
     init(config: TestCase, submission: URL) throws {
         self.config = config
         self.submission = submission
-        self.processManager = CProcessManager(config.compiler)
+        self.compiler = Compiler(config.compiler)
         self.testEnvironment = try TestEnivronment(config: config, submission: submission)
     }
     
     public func performTests() throws -> TestResult {
-        
         var result = TestResult()
         var runTime: TimeInterval?
         var errorMsg: String?
         
-        let processResult = try executeTests()
-        
-        switch processResult {
-        case .timeNeeded(seconds: let seconds): runTime = seconds
-        case .error(let error): errorMsg = error.description
+        do {
+            runTime = try executeTests()
+        } catch let error as DescriptiveError {
+            errorMsg = error.description
         }
         
         if let logfile = try? testEnvironment.getItem(withName: UnitTest.assertsJsonLog) {
@@ -48,87 +44,56 @@ public struct UnitTest {
         return result
     }
     
-    private func executeTests() throws -> ProcessResult {
-        let canBuildCustomExecutable = try buildCustomExecutable()
+    private func executeTests() throws -> TimeInterval {
+        let executable = try buildSubmissionExecutable()
+        let canBuildCostumExecutable = try buildCustomExecutable() != nil
         
-        if canBuildCustomExecutable {
+        if canBuildCostumExecutable {
             return try runCustomTasks()
         } else {
-            return try runSubmissionExecutable()
+            return try runSubmissionExecutable(executable)
         }
     }
     
-    private func runSubmissionExecutable() throws -> ProcessResult {
-        let executable = try buildSubmissionExecutable()
-        
-        let runTime = try processManager.run(
-            process: executable,
-            arguments: [],
-            deadline: config.timeout)
-        
-        return runTime
+    private func runSubmissionExecutable(_ executable: Executable) throws -> TimeInterval {
+        return try executable.run(arguments: [], deadline: config.timeout)
     }
     
-    private func runCustomTasks() throws -> ProcessResult {
-        let _ = try buildSubmissionExecutable()
-        let zeroBuildTime = ProcessResult.timeNeeded(seconds: 0)
-        
-        let processResult = try config.tasks.reduce(zeroBuildTime) { partialResult, task in
-            let result = try runCustomTask(task)
-            
-            if case let .timeNeeded(seconds: runTime) = result,
-               case let .timeNeeded(seconds: partialRuntime) = partialResult
-            {
-                return .timeNeeded(seconds: runTime + partialRuntime)
-            }
-            
-            return partialResult
+    private func runCustomTasks() throws -> TimeInterval {
+        let timeNeeded = try config.tasks.reduce(0.0) { totalRunTime, task in
+            let currentRunTime = try runCustomTask(task)
+            return currentRunTime + totalRunTime
         }
-        
-        return processResult
+        return timeNeeded
     }
     
-    private func runCustomTask(_ task: TestCase.Process) throws -> ProcessResult {
-        let process = try self.testEnvironment
-            .getItem(withName: task.executableName)
-        
-        return try processManager.run(
-            process: process,
-            arguments: task.commandLineArguments,
-            deadline: config.timeout)
+    private func runCustomTask(_ task: TestCase.Process) throws -> TimeInterval {
+        let process = try self.testEnvironment.getItem(withName: task.executableName)
+        let executable = Executable(url: process)
+        return try executable.run(arguments: task.commandLineArguments, deadline: config.timeout)
     }
-    
     
     /// Build the submission executable.
     /// - Returns: `URL` to the executable.
-    private func buildSubmissionExecutable() throws -> URL {
+    private func buildSubmissionExecutable() throws -> Executable {
         let executable = config.submissionExecutable
         let sourceFiles = try testEnvironment.submissionSourceFiles()
-        return try buildExecutable(executable, fromSourceFiles: sourceFiles)
+        return try buildExecutable(executable, from: sourceFiles)
     }
     
     /// Builds the constum executable.
-    /// - Returns: true, if a custom executable was specified and false otherwise.
-    private func buildCustomExecutable() throws -> Bool {
-        guard let executable = config.customTestExecutable else { return false }
+    /// - Returns: `Compiler.BuildResult`, if a custom executable was specified and `nil` otherwise.
+    private func buildCustomExecutable() throws -> Executable? {
+        guard let executable = config.customTestExecutable else { return nil }
         let sourceFiles = try testEnvironment.customSourceFiles()
-        let _ = try buildExecutable(executable, fromSourceFiles: sourceFiles)
-        return true
+        return try buildExecutable(executable, from: sourceFiles)
     }
     
-    private func buildExecutable(
-        _ executable: TestCase.Executable,
-        fromSourceFiles files: [URL])
-    throws -> URL
-    {
-        let destination = testEnvironment
-            .appendingPathCompotent(executable.name)
-        
-        let _ = try processManager.build(
+    private func buildExecutable(_ executable: TestCase.Executable, from files: [URL]) throws -> Executable {
+        let destination = testEnvironment.appendingPathCompotent(executable.name)
+        return try compiler.build(
             sourceFiles: files,
             destination: destination,
             options: executable.buildOptions)
-        
-        return destination
     }
 }

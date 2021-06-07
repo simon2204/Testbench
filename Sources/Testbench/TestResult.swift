@@ -37,13 +37,14 @@ public struct TestResult: Codable {
 
 extension TestResult {
     init(from logfile: URL) throws {
-        let decoder = JSONDecoder()
         self.init()
+        
+        let decoder = JSONDecoder()
         
         // read in the logdata from a local file
         let logdata = try String(contentsOf: logfile, encoding: .utf8)
         
-        // each line represents a test case's logdata
+        // each line represents a `LogfileEntry`
         let lines = logdata.components(separatedBy: .newlines)
         
         for line in lines {

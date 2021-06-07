@@ -18,12 +18,13 @@ struct Executable {
         task.arguments = arguments
         task.standardOutput = pipe
         
-        let runResult = try Executable.measureExecutionTime {
+        let timeNeeded = try Executable.measureExecutionTime {
             try task.run()
+            
             let deadlineHasPassed = task.waitUntilExit(deadline: .now() + deadline)
-            if deadlineHasPassed {
-                throw RunTimeExeededError(seconds: deadline.seconds)
-            }
+            
+            if deadlineHasPassed { throw RunTimeExeededError(seconds: deadline.seconds) }
+            
             guard task.terminationReason == .exit else {
                 let status = task.terminationStatus
                 let description = pipe.errorDescription
@@ -31,7 +32,7 @@ struct Executable {
             }
         }
         
-        return runResult
+        return timeNeeded
     }
 }
 
@@ -60,7 +61,9 @@ extension Executable {
             description = "Die maximale Laufzeit des Programmes von \(seconds) Sekunden wurde überschritten."
         }
     }
+}
 
+extension Executable {
     struct UncaughtSignalError: DescriptiveError {
         let description: String
         

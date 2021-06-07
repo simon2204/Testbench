@@ -46,7 +46,7 @@ public struct UnitTest {
     
     private func executeTests() throws -> TimeInterval {
         let executable = try buildSubmissionExecutable()
-        let canBuildCostumExecutable = try buildCustomExecutable() != nil
+        let canBuildCostumExecutable = try buildCustomExecutable()
         
         if canBuildCostumExecutable {
             return try runCustomTasks()
@@ -82,11 +82,12 @@ public struct UnitTest {
     }
     
     /// Builds the constum executable.
-    /// - Returns: `Compiler.BuildResult`, if a custom executable was specified and `nil` otherwise.
-    private func buildCustomExecutable() throws -> Executable? {
-        guard let executable = config.customTestExecutable else { return nil }
+    /// - Returns: `true`, if a custom executable was specified and `false` otherwise.
+    private func buildCustomExecutable() throws -> Bool {
+        guard let executable = config.customTestExecutable else { return false }
         let sourceFiles = try testEnvironment.customSourceFiles()
-        return try buildExecutable(executable, from: sourceFiles)
+        let _ = try buildExecutable(executable, from: sourceFiles)
+        return true
     }
     
     private func buildExecutable(_ executable: TestCase.Executable, from files: [URL]) throws -> Executable {

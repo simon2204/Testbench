@@ -4,7 +4,7 @@
     "timeoutInMs": 5000,
     "sharedResources": "testfiles",
     "submissionExecutable": {"name": "submission-executable"},
-    "customTestExecutable": {
+    "customExecutable": {
         "name": "test-executable",
         "dependencies": "tests"
     },

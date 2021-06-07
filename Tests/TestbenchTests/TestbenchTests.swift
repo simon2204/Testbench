@@ -18,7 +18,6 @@ final class TestbenchTests: XCTestCase {
 
     
     override class func setUp() {
-
         // URL to XCTest's Resources directory
         #if os(macOS)
         let resources = Bundle.module.resourceURL!.appendingPathComponent("Resources")
@@ -66,8 +65,6 @@ final class TestbenchTests: XCTestCase {
         XCTAssert(!result.entries.isEmpty)
         result.entries.forEach { XCTAssert($0.error.isEmpty) }
         result.entries.forEach { XCTAssert($0.expected == $0.actual) }
-        
-        print(result.date)
     }
     
 
@@ -126,6 +123,21 @@ final class TestbenchTests: XCTestCase {
         let errorMsg = try XCTUnwrap(testResult.errorMsg)
         
         XCTAssertEqual(errorMsg, "Das Programm beendete sich mit Statuscode 11.")
+    }
+    
+    func testHuffmanSuccessful() throws {
+        let huffmanSuccessful = TestbenchTests
+            .submission
+            .appendingPathComponent("huffman")
+            .appendingPathComponent("successful")
+
+        let testbench = Testbench(config: TestbenchTests.configJSONURL)
+        
+        let result = try testbench.performTests(submission: huffmanSuccessful, assignment: 9)
+
+        XCTAssert(!result.entries.isEmpty)
+        result.entries.forEach { XCTAssert($0.error.isEmpty) }
+        result.entries.forEach { XCTAssert($0.expected == $0.actual) }
     }
 
     

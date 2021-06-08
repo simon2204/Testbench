@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 extension Process {
     /// Block until the receiver is finished. Terminates the receiver after passing a deadline.
     /// - Parameter deadline: The latest time by which the receiver should have completed the task.

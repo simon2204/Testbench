@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct UnitTest {
+struct UnitTest {
     private static let assertsJsonLog = "ppr_tb_asserts_json.log"
     
     private let config: TestCase
@@ -22,7 +22,7 @@ public struct UnitTest {
         self.testEnvironment = try TestEnivronment(config: config, submission: submission)
     }
     
-    public func performTests() throws -> TestResult {
+    func performTests() throws -> TestResult {
         var result = TestResult()
         var runTime: TimeInterval?
         var errorMsg: String?
@@ -39,7 +39,6 @@ public struct UnitTest {
         
         result.runTime = runTime
         result.errorMsg = errorMsg
-        result.name = config.label
 
         return result
     }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// Das Ergebnis der Auswertung  zu einer Praktikumsaufgabe.
+/// Ergebnis der Auswertung  zu einer Praktikumsaufgabe.
 ///
 /// Die Auswertung beinhaltet alle Ergebnisse zu den verschiedenen Testfällen, die ausgeführt wurden.
 /// Sowie der Ausführungsdauer, eine eventuelle Fehlermeldung und das Datum,
@@ -27,17 +27,16 @@ public struct TestResult: Codable {
     /// Enthält `nil`, wenn alle Testfälle durchlaufen werden konnten.
     public var errorMsg: String?
     
-    /// Datum des Starts zur Ausführung der Testfälle.
+    /// Beginn der Ausführung der Testfälle.
     public var date: String
     
     init() {
         let now = Date()
-        let localizedDate = DateFormatter
-            .localizedString(
-                from: now,
-                dateStyle: .full,
-                timeStyle: .long)
-        self.date = localizedDate
+        self.date = Self.localizedString(from: now)
+    }
+    
+    private static func localizedString(from date: Date) -> String {
+        DateFormatter.localizedString(from: date, dateStyle: .full, timeStyle: .long)
     }
     
     /// Logeintrag eines Testfalles.
@@ -65,7 +64,7 @@ public struct TestResult: Codable {
         /// Weitere Informationen zu einem Testfall.
         ///
         /// Es kann zum Beispiel Aufschluss darüber gegeben werden, was in diesem Testfall konkret überprüft wird.
-        /// Welche Funktion getestet wird und wie sie aufgerufen wird.
+        /// Welche Funktion getestet und wie sie aufgerufen wurde.
         ///
         public let info: String
         

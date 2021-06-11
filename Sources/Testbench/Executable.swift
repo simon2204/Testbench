@@ -56,7 +56,6 @@ extension Executable {
 extension Executable {
     struct RunTimeExeededError: DescriptiveError {
         let description: String
-        
         init(seconds: TimeInterval) {
             description = "Die maximale Laufzeit des Programmes von \(seconds) Sekunden wurde überschritten."
         }
@@ -66,7 +65,6 @@ extension Executable {
 extension Executable {
     struct UncaughtSignalError: DescriptiveError {
         let description: String
-        
         init(status: Int32, description: String) {
             let defaultDescription = "Das Programm beendete sich mit Statuscode \(status)."
             self.description = defaultDescription + (description.isEmpty ? "" : "\n\n\(description)")

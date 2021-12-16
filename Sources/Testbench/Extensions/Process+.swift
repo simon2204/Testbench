@@ -15,7 +15,7 @@ extension Process {
         var deadlineHasPassed = false
         
         let terminationTask = DispatchWorkItem {
-            self.terminate()
+			try? self.kill()
             deadlineHasPassed = true
         }
         
@@ -29,4 +29,11 @@ extension Process {
         
         return deadlineHasPassed
     }
+	
+	func kill() throws {
+		let killProcess = Process()
+		killProcess.executableURL = URL(fileURLWithPath: "/bin/kill")
+		killProcess.arguments = ["-9", String(self.processIdentifier)]
+		try killProcess.run()
+	}
 }

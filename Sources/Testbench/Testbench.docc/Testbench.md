@@ -1,6 +1,6 @@
 # ``Testbench``
 
-Werte Lösungen von Praktikumsaufgaben der Prodezudralen Programmierung in C aus.
+Werte Lösungen von Praktikumsaufgaben der Prozeduralen Programmierung in C aus.
 
 ## Overview
 

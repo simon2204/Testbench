@@ -16,7 +16,7 @@ final class TestEnivronment {
     private let customDependencies: URL?
     private let sharedResources: URL?
     
-    init(config: TestCase, submission: URL) throws {
+    init(config: Config, submission: URL) throws {
         let workingURL = config.workingDirectory
         self.destination = TestEnivronment.appendingUniquePathComponent(on: workingURL)
         
@@ -63,7 +63,7 @@ final class TestEnivronment {
                 .default
                 .createDirectory(
                     atPath: destination.path,
-                    withIntermediateDirectories: true)
+                    withIntermediateDirectories: false)
         
         try FileManager
                 .default
@@ -79,8 +79,7 @@ final class TestEnivronment {
     }
     
     private static func appendingUniquePathComponent(on url: URL) -> URL {
-        url.appendingPathComponent("tests")
-            .appendingPathComponent(UUID().uuidString)
+        url.appendingPathComponent(UUID().uuidString)
     }
     
     private func copySubmissionDependencies() throws {
@@ -93,7 +92,6 @@ final class TestEnivronment {
         try FileManager
             .default
             .copyItems(at: dependencies, into: submissionBuild)
-        
     }
     
     fileprivate func copyCustomDependencies() throws {
@@ -129,7 +127,9 @@ final class TestEnivronment {
     }
     
     deinit {
-        cleanUp()
+		#if !DEBUG
+		cleanUp()
+		#endif
     }
 }
 

@@ -54,14 +54,13 @@ struct Compiler {
 
 
 // MARK: - Error(s)
-
 extension Compiler {
     struct DidNotCompileError: DescriptiveError {
         let description: String
         
         init(status: Int32, description: String) {
-            let defaultDescription = "Das Programm konnte nicht kompiliert werden und warf Statuscode \(status)."
-            self.description = defaultDescription + (description.isEmpty ? "" : "\n\n\(description)")
+            let defaultDescription = "Die Anwendung konnte nicht kompiliert werden. Statuscode \(status)."
+            self.description = defaultDescription + (description.isEmpty ? "" : " \(description)")
         }
     }
 }

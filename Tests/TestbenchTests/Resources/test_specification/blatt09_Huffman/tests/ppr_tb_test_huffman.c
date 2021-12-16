@@ -82,7 +82,7 @@ bool ppr_tb_compare_filesizes(
     long long size_hdfile;
     bool ok = true;
     
-    printf("Grösse der Dateien\n");
+    // printf("Grösse der Dateien\n");
 
     if (stat(in_filename, &attribut) == -1)
     {

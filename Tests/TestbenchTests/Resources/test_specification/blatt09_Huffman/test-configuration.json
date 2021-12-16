@@ -1,7 +1,8 @@
 {
     "id": 9,
-    "label": "Huffman (Blatt 9)",
-    "timeoutInMs": 5000,
+    "assignmentName": "Huffman (Blatt 9)",
+    "timeoutInMs": 50000,
+    "totalTestcases": 10,
     "sharedResources": "testfiles",
     "submissionExecutable": {"name": "submission-executable"},
     "customExecutable": {

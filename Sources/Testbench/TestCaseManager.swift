@@ -8,6 +8,7 @@
 import Foundation
 
 struct TestCaseManager {
+    /// Global configuration file.
     private let config: URL
     
     init(config: URL) {
@@ -19,7 +20,7 @@ struct TestCaseManager {
         return config.assignments
     }
     
-    func testCase(forAssignment id: Int) throws -> TestCase {
+    func testCase(forAssignment id: Int) throws -> Config {
         let assignments = try availableAssignments()
         
         guard let assignment = assignments.first(where: { $0.id == id }) else {
@@ -29,16 +30,16 @@ struct TestCaseManager {
         let config = try GlobalConfig.loadWithJSONDecoder(from: config)
         let testSpecURL = URL(fileURLWithPath: config.testSpecificationDirectory)
         let testConfigURL = URL(fileURLWithPath: assignment.filePath, relativeTo: testSpecURL)
-        let testConfig = try TestConfig.loadWithJSONDecoder(from: testConfigURL)
+        let testConfig = try LocalConfig.loadWithJSONDecoder(from: testConfigURL)
         
-        return TestCase(
-            _testConfigURL: testConfigURL,
+        return Config(
+            testConfigURL: testConfigURL,
             globalConfig: config,
-            config: testConfig)
+            localConfig: testConfig)
     }
     
-    func performTests(submission: URL, testcase: TestCase) throws -> TestResult {
-        let unitTest = try UnitTest(config: testcase, submission: submission)
+    func performTests(submission: URL, testcase: Config) throws -> TestResult {
+        let unitTest = UnitTest(config: testcase, submission: submission)
         return try unitTest.performTests()
     }
 }

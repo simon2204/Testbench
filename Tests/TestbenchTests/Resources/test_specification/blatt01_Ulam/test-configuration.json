@@ -1,6 +1,7 @@
 {
-    "id": 1,
-    "label": "Ulam (Blatt 1)",
+    "id": 82893,
+    "assignmentName": "Ulam (Blatt 1)",
+    "totalTestcases": 7,
     "timeoutInMs": 10000,
     "submissionExecutable": {"name": "submission-executable", "dependencies": "tests"}
 }

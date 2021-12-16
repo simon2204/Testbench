@@ -11,16 +11,7 @@ import ZIPFoundation
 extension FileManager {
     func items(at url: URL) throws -> [URL] {
         let paths = try contentsOfDirectory(atPath: url.path)
-
-        #if os(macOS)
-        let items = try paths.lazy
-                .map(url.appendingPathComponent)
-                .map { try URL(resolvingAliasFileAt: $0) }
-        #else
-        let items = paths
-                .map(url.appendingPathComponent)
-        #endif
-
+        let items = paths.map(url.appendingPathComponent)
         return items
     }
 }

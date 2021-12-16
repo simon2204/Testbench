@@ -7,47 +7,52 @@
 
 import Foundation
 
-struct UnitTest {
+final class UnitTest {
     private static let assertsJsonLog = "ppr_tb_asserts_json.log"
     
-    private let config: TestCase
+    private let config: Config
     private let submission: URL
     private let compiler: Compiler
-    private let testEnvironment: TestEnivronment
+    private var testEnvironment: TestEnivronment!
     
-    init(config: TestCase, submission: URL) throws {
+    init(config: Config, submission: URL) {
         self.config = config
         self.submission = submission
         self.compiler = Compiler(config.compiler)
-        self.testEnvironment = try TestEnivronment(config: config, submission: submission)
     }
     
     func performTests() throws -> TestResult {
-        var result = TestResult()
+        var result: TestResult
         var runTime: TimeInterval?
         var errorMsg: String?
         
         do {
+            testEnvironment = try TestEnivronment(config: config, submission: submission)
             runTime = try executeTests()
         } catch let error as DescriptiveError {
             errorMsg = error.description
+        } catch {
+            errorMsg = error.localizedDescription
         }
         
-        if let logfile = try? testEnvironment.getItem(withName: UnitTest.assertsJsonLog) {
-            result = try TestResult(from: logfile)
-        }
+        result = TestResult(
+            assignmentName: config.assignmentName,
+            totalTestcases: config.totalTestcases,
+            runTime: runTime, errorMsg: errorMsg
+        )
         
-        result.runTime = runTime
-        result.errorMsg = errorMsg
+        if let logfile = try? testEnvironment?.getItem(withName: UnitTest.assertsJsonLog) {
+            try result.appendEntries(from: logfile)
+        }
 
         return result
     }
     
     private func executeTests() throws -> TimeInterval {
         let executable = try buildSubmissionExecutable()
-        let canBuildCostumExecutable = try buildCustomExecutable()
+        let canBuildCustomExecutable = try buildCustomExecutable()
         
-        if canBuildCostumExecutable {
+        if canBuildCustomExecutable {
             return try runCustomTasks()
         } else {
             return try runSubmissionExecutable(executable)
@@ -66,9 +71,16 @@ struct UnitTest {
         return timeNeeded
     }
     
-    private func runCustomTask(_ task: TestCase.Process) throws -> TimeInterval {
+    private func runCustomTask(_ task: Config.Process) throws -> TimeInterval {
         let process = try self.testEnvironment.getItem(withName: task.executableName)
-        let executable = Executable(url: process)
+		
+		var exitCodeURL: URL?
+		
+		if let exitCodeName = task.exitcodeName {
+			exitCodeURL = testEnvironment.appendingPathCompotent(exitCodeName)
+		}
+		
+		let executable = Executable(url: process, exitcodeName: exitCodeURL)
         return try executable.run(arguments: task.commandLineArguments, deadline: config.timeout)
     }
     
@@ -89,7 +101,7 @@ struct UnitTest {
         return true
     }
     
-    private func buildExecutable(_ executable: TestCase.Executable, from files: [URL]) throws -> Executable {
+    private func buildExecutable(_ executable: Config.Executable, from files: [URL]) throws -> Executable {
         let destination = testEnvironment.appendingPathCompotent(executable.name)
         return try compiler.build(
             sourceFiles: files,

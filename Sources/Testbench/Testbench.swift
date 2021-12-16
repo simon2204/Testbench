@@ -39,8 +39,8 @@ public struct Testbench {
     /// - Parameters:
     ///   - submission: Pfad zum Ordner der Einreichung.
     ///   - id: Die Praktikumsaufgabe mit der entsprechenden `id`, welche ausgewertet werden soll.
-    /// - Throws: TestCaseError.assignmentNotFound(forID:) bei einer `id`,  zu der es keine zugehörige Praktikumsaufgabe gibt.
     /// - Returns: Auswertung zu der Praktikumsaufgabe.
+    /// - Throws: TestCaseError.assignmentNotFound(forID:) bei einer `id`,  zu der es keine zugehörige Praktikumsaufgabe gibt.
     public func performTests(submission: URL, assignment id: Int) throws -> TestResult {
         let testCase = try testCaseManager.testCase(forAssignment: id)
         return try testCaseManager.performTests(submission: submission, testcase: testCase)

@@ -1,58 +1,63 @@
 //
-//  TestConfig.swift
+//  LocalConfig.swift
 //  
 //
 //  Created by Simon Schöpke on 18.04.21.
 //
 
-struct TestConfig: Identifiable, Codable {
+struct LocalConfig: Identifiable, Codable {
     
-    public let id: Int
+    let id: Int
     
     /// The assignment's label.
     ///
     /// For expample: Blocksatz (Blatt 06)
-    public let label: String
+    let assignmentName: String
     
     /// The maximum time needed for executing all test cases in milliseconds.
     ///
     /// If the test cases need more than the specified amout of time, the submission might have run into an infinite loop.
-    public let timeoutInMs: Int
+    let timeoutInMs: Int
     
-    public let sharedResources: String?
+    let totalTestcases: Int
     
-    public let submissionExecutable: Executable?
+    let sharedResources: String?
     
-    public let customExecutable: Executable?
+    let submissionExecutable: Executable?
     
-    public let tasks: [Process]?
+    let customExecutable: Executable?
+    
+    let tasks: [Process]?
 }
 
 
-extension TestConfig {
-    public struct Process: Codable {
+extension LocalConfig {
+    struct Process: Codable {
         
         /// Name of the executable
-        public let executableName: String
+        let executableName: String
         
         /// Arguments to pass to the executable
-        public let commandLineArguments: [String]
+        let commandLineArguments: [String]
+		
+		/// Name of the file to save the exit-code in.
+		let exitcodeFileName: String?
     }
 }
 
 
-extension TestConfig {
-    public struct Executable: Codable {
+extension LocalConfig {
+    struct Executable: Codable {
         
         /// Name of the executable after compiling
-        public let name: String
+        let name: String
         
         /// Name of the directory containing dependencies for building the executable
-        public let dependencies: String?
+        let dependencies: String?
     
         /// Additional build options
         ///
         /// Overrides build options from "config.json" but does not override internal build options.
-        public let buildOptions: [String]?
+        let buildOptions: [String]?
     }
 }

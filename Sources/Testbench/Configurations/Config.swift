@@ -1,5 +1,5 @@
 //
-//  TestCase.swift
+//  Config.swift
 //  
 //
 //  Created by Simon Schöpke on 07.05.21.
@@ -7,47 +7,47 @@
 
 import Foundation
 
-
-struct TestCase {
+struct Config {
     
-    /// `URL` to the test configuration.
-    let _testConfigURL: URL
+    let testConfigURL: URL
     
     let globalConfig: GlobalConfig
-    /// Config from the test configuration.
-    let config: TestConfig
     
-    public var label: String {
-        config.label
+    let localConfig: LocalConfig
+    
+    /// Name der Praktikumsaufgabe.
+    var assignmentName: String {
+        localConfig.assignmentName
     }
     
-    public var workingDirectory: URL {
+    /// Die gesamte Anzahl an Testfällen, die durchgeführt werden.
+    var totalTestcases: Int {
+        localConfig.totalTestcases
+    }
+    
+    var workingDirectory: URL {
         URL(fileURLWithPath: globalConfig.workingDirectory)
     }
     
-    public var testSpecURL: URL {
+    var testSpecURL: URL {
         URL(fileURLWithPath: globalConfig.testSpecificationDirectory)
     }
     
-    public var testConfigURL: URL {
-        _testConfigURL
+    var timeout: DispatchTimeInterval {
+        .milliseconds(localConfig.timeoutInMs)
     }
     
-    public var timeout: DispatchTimeInterval {
-        .milliseconds(config.timeoutInMs)
-    }
-    
-    public var sharedResources: URL? {
-        guard let resources = config.sharedResources else {
+    var sharedResources: URL? {
+        guard let resources = localConfig.sharedResources else {
             return nil
         }
         return URL(fileURLWithPath: resources, relativeTo: testConfigURL)
     }
     
-    public var submissionExecutable: Executable {
+    var submissionExecutable: Executable {
         if let executable = Executable(
-            executable: config.submissionExecutable,
-            testConfigURL: _testConfigURL,
+            executable: localConfig.submissionExecutable,
+            testConfigURL: testConfigURL,
             buildOptions: globalConfig.buildOptions)
         {
             return executable
@@ -56,52 +56,56 @@ struct TestCase {
         return Executable(name: "submission")
     }
     
-    public var customTestExecutable: Executable? {
+    var customTestExecutable: Executable? {
         Executable(
-            executable: config.customExecutable,
-            testConfigURL: _testConfigURL,
+            executable: localConfig.customExecutable,
+            testConfigURL: testConfigURL,
             buildOptions: globalConfig.buildOptions
         )
     }
     
-    public var compiler: URL {
+    var compiler: URL {
         URL(fileURLWithPath: globalConfig.compiler)
     }
     
-    public var tasks: [Process] {
-        let processes = config.tasks ?? []
+    var tasks: [Process] {
+        let processes = localConfig.tasks ?? []
         return processes.map(Process.init)
     }
-    
 }
 
-extension TestCase {
+extension Config {
     public struct Process {
         /// Name of the executable
-        public let executableName: String
+        let executableName: String
         
         /// Arguments to pass to the executable
-        public let commandLineArguments: [String]
+        let commandLineArguments: [String]
+		
+		/// Name of the file where the exit-code should get saved in.
+		let exitcodeName: String?
         
-        fileprivate init(_ process: TestConfig.Process) {
+        fileprivate init(_ process: LocalConfig.Process) {
             self.executableName = process.executableName
             self.commandLineArguments = process.commandLineArguments
+			self.exitcodeName = process.exitcodeFileName
         }
     }
 }
 
-extension TestCase {
-    public struct Executable {
+extension Config {
+    struct Executable {
+        
         /// Name of the executable after compiling
-        public let name: String
+        let name: String
         
         /// Name of the directory containing dependencies for building the executable
-        public let dependencies: URL?
+        let dependencies: URL?
         
         /// Additional build options
         ///
         /// Overrides build options from "config.json" but does not override internal build options.
-        public let buildOptions: [String]
+        let buildOptions: [String]
         
         fileprivate init(
             name: String,
@@ -114,7 +118,7 @@ extension TestCase {
         }
         
         fileprivate init?(
-            executable: TestConfig.Executable?,
+            executable: LocalConfig.Executable?,
             testConfigURL: URL,
             buildOptions: [String]?)
         {

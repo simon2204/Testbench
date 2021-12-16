@@ -23,7 +23,7 @@ struct CFileManager {
         let cFileURLs = try cFiles(at: url)
         
         for cFileURL in cFileURLs {
-            let content = try String(contentsOf: cFileURL)
+            let content = try String(contentsOf: cFileURL, encoding: .ascii)
             
             let replacement = content.replaceContent(
                 matching: CFileManager.mainFuncRegex,

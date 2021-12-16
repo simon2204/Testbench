@@ -17,7 +17,7 @@ func createConfigJSON(
         "buildOptions": ["-O", "-Wall"],
         "assignments": [
             {
-                "id": 1,
+                "id": 82893,
                 "name": "Ulam",
                 "filePath": "blatt01_Ulam/test-configuration.json"
             },

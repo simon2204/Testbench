@@ -1,6 +1,6 @@
 import XCTest
 import Foundation
-@testable import Testbench
+import Testbench
 
 final class TestbenchTests: XCTestCase {
     
@@ -15,7 +15,6 @@ final class TestbenchTests: XCTestCase {
     static let configJSON = "config.json"
     
     static let configJSONURL = tmpDirectory.appendingPathComponent(configJSON)
-
     
     override class func setUp() {
         // URL to XCTest's Resources directory
@@ -60,14 +59,12 @@ final class TestbenchTests: XCTestCase {
 
         let testbench = Testbench(config: TestbenchTests.configJSONURL)
         
-        let result = try testbench.performTests(submission: ulamSuccessful, assignment: 1)
+        let result = try testbench.performTests(submission: ulamSuccessful, assignment: 82893)
 
         XCTAssert(!result.entries.isEmpty)
         result.entries.forEach { XCTAssert($0.error.isEmpty) }
-        result.entries.forEach { XCTAssert($0.expected == $0.actual) }
     }
     
-
     func testUlamDoesNotCompile() throws {
         let ulamDoesNotCompile = TestbenchTests
             .submission
@@ -78,7 +75,7 @@ final class TestbenchTests: XCTestCase {
         
         let testResult = try testbench.performTests(
             submission: ulamDoesNotCompile,
-            assignment: 1)
+            assignment: 82893)
         
         XCTAssertNil(testResult.runTime)
         
@@ -87,7 +84,6 @@ final class TestbenchTests: XCTestCase {
         XCTAssert(!errorMsg.isEmpty)
     }
     
-
     func testUlamInfiniteLoop() throws {
         let ulamInfiniteLoop = TestbenchTests
             .submission
@@ -98,7 +94,7 @@ final class TestbenchTests: XCTestCase {
 
         let testResult = try testbench.performTests(
             submission: ulamInfiniteLoop,
-            assignment: 1)
+            assignment: 82893)
         
         let errorMsg = try XCTUnwrap(testResult.errorMsg)
         
@@ -106,7 +102,6 @@ final class TestbenchTests: XCTestCase {
         
         XCTAssertEqual(errorMsg, "Die maximale Laufzeit des Programmes von 10.0 Sekunden wurde überschritten.")
     }
-    
 
     func testUlamProgramCrash() throws {
         let ulamProgramCrash = TestbenchTests
@@ -118,7 +113,7 @@ final class TestbenchTests: XCTestCase {
         
         let testResult = try testbench.performTests(
             submission: ulamProgramCrash,
-            assignment: 1)
+            assignment: 82893)
         
         let errorMsg = try XCTUnwrap(testResult.errorMsg)
         
@@ -126,6 +121,8 @@ final class TestbenchTests: XCTestCase {
     }
     
     func testHuffmanSuccessful() throws {
+        print(Self.tmpDirectory)
+        
         let huffmanSuccessful = TestbenchTests
             .submission
             .appendingPathComponent("huffman")
@@ -134,19 +131,10 @@ final class TestbenchTests: XCTestCase {
         let testbench = Testbench(config: TestbenchTests.configJSONURL)
         
         let result = try testbench.performTests(submission: huffmanSuccessful, assignment: 9)
+        
+        XCTAssertNil(result.errorMsg)
 
         XCTAssert(!result.entries.isEmpty)
         result.entries.forEach { XCTAssert($0.error.isEmpty) }
-        result.entries.forEach { XCTAssert($0.expected == $0.actual) }
-    }
-
-    
-    func testFindAvailableAssignments() throws {
-        let testbench = Testbench(config: TestbenchTests.configJSONURL)
-        let assignments = try testbench.availableAssignments()
-        
-        assignments.enumerated().forEach { number, assignment in
-            XCTAssertEqual(number + 1, assignment.id)
-        }
     }
 }

@@ -34,14 +34,12 @@ struct Executable {
 				let status = "\(task.terminationStatus)"
 				try status.write(to: exitcodeName, atomically: true, encoding: .ascii)
 			} else {
-				guard task.terminationReason == .exit else {
-					let status = task.terminationStatus
+                let status = task.terminationStatus
+				guard status == 0 else {
 					let description = pipe.errorDescription
 					throw UncaughtSignalError(status: status, description: description)
 				}
 			}
-            
-            
         }
         
         return timeNeeded

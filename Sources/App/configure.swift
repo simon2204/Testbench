@@ -4,8 +4,6 @@ import Vapor
 public func configure(_ app: Application) throws {
     // set public directory to a custom one
     app.directory.resourcesDirectory = "/home/TestbenchDirectories"
-    
-    print("Resources directory: \(app.directory.resourcesDirectory)")
      
     // enable file middleware
     app.middleware.use(FileMiddleware(publicDirectory: app.directory.resourcesDirectory))

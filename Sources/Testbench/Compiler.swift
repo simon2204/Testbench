@@ -8,13 +8,27 @@
 import Foundation
 
 struct Compiler {
+    
+    /// URL des Compilers.
     private let url: URL
     
+    /// Erstellt einen Compiler, der den Compiler auf dem System verwendet.
+    /// - Parameter url: URL des Compilers.
     init(_ url: URL) {
         self.url = url
     }
     
-    func build(sourceFiles: [URL], destination: URL, options: [String]) throws -> Executable {
+    /// Baut ein `Executable` aus den übergebenen Dateien.
+    /// - Parameters:
+    ///   - sourceFiles: Source Dateien aus denen die Anwendung gebaut wird.
+    ///   - destination: Speicherort der zu erstellenden Anwendung
+    ///   - options: Build Optionen.
+    /// - Returns: Executable, welches aus den übergebenen Dateien erstellt wurde.
+    func build(
+        sourceFiles: [URL],
+        destination: URL,
+        options: [String]) throws -> Executable
+    {
         let arguments = Compiler.buildArguments(
             sourceFiles: sourceFiles,
             destination: destination,
@@ -25,7 +39,11 @@ struct Compiler {
         return Executable(url: destination)
     }
     
-    private static func buildArguments(sourceFiles: [URL], destination: URL, options: [String]) -> [String] {
+    private static func buildArguments(
+        sourceFiles: [URL],
+        destination: URL,
+        options: [String]) -> [String]
+    {
         let sourceFilePaths = sourceFiles.map(\.path)
         let outputOption = "-o"
         let outputFile = destination.path

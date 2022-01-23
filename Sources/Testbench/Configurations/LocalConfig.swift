@@ -5,42 +5,46 @@
 //  Created by Simon Schöpke on 18.04.21.
 //
 
+/// Lokale Konfiguration der Testbench.
+///
+/// Mit Hilfe dieses structs wird die lokale Konfigurationsdatei dekodiert.
 struct LocalConfig: Identifiable, Codable {
     
+    /// Identifikation der Praktikumsaufgabe.
     let id: Int
     
-    /// The assignment's label.
-    ///
-    /// For expample: Blocksatz (Blatt 06)
+    /// Name der Praktikumsaufgabe.
     let assignmentName: String
     
-    /// The maximum time needed for executing all test cases in milliseconds.
-    ///
-    /// If the test cases need more than the specified amout of time, the submission might have run into an infinite loop.
+    /// Die Zeit nachdem die Ausführung der Testung abgebrochen wird.
     let timeoutInMs: Int
     
+    /// Anzahl der gesamten Testfälle.
     let totalTestcases: Int
     
+    /// Ressourcen, die die `tasks` verwenden können.
     let sharedResources: String?
     
+    /// Auführbares Programm, welches eingereicht wurde.
     let submissionExecutable: Executable?
     
+    /// Ausführbares Programm, um das eingereichte Programm zu überprüfen.
     let customExecutable: Executable?
     
-    let tasks: [Process]?
+    /// Aufgaben, welche das `submissionExecutable` oder `customExecutable` ausführen sollen.
+    let tasks: [Task]?
 }
 
 
 extension LocalConfig {
-    struct Process: Codable {
-        
-        /// Name of the executable
+    struct Task: Codable {
+        /// Name des ausführbaren Programmes.
         let executableName: String
         
-        /// Arguments to pass to the executable
+        /// Kommandozeilenargumente, die dem Programm übergeben werden können.
         let commandLineArguments: [String]
 		
-		/// Name of the file to save the exit-code in.
+		/// Name der Datei, welche nach Beendigung des Programmes den Exitcode beinhaltet.
 		let exitcodeFileName: String?
     }
 }
@@ -49,15 +53,15 @@ extension LocalConfig {
 extension LocalConfig {
     struct Executable: Codable {
         
-        /// Name of the executable after compiling
+        /// Name des ausführbaren Programmes.
         let name: String
         
-        /// Name of the directory containing dependencies for building the executable
+        /// Pfad zum Ordner, welcher die Dateien zum Kompilieren enthält.
         let dependencies: String?
     
-        /// Additional build options
+        /// Optionen zum Bauen des Programmes.
         ///
-        /// Overrides build options from "config.json" but does not override internal build options.
+        /// Überschreibt die globalen Build-Optionen, wenn etwas angegeben wird.
         let buildOptions: [String]?
     }
 }

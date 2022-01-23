@@ -18,7 +18,7 @@
 public struct Assignment: Codable {
     /// Kennzeichnet die Praktikumsaufgabe eindeutich.
     ///
-    /// Die `id` wird gewöhnlich nach der Reihenfolge der Veröffentlichung der Praktikumsaufgaben vergeben.
+    /// Die `id` ist für gewöhnlich aus der URL der jeweiligen Praktikumsaufgabe zu entnehmen.
     public let id: Int
     
     /// Name der Praktikumsaufgabe.

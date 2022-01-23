@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Vereinigt die lokale Konfiguration mit der globalen Konfiguration.
 struct Config {
     
     let testConfigURL: URL
@@ -85,7 +86,7 @@ extension Config {
 		/// Name of the file where the exit-code should get saved in.
 		let exitcodeName: String?
         
-        fileprivate init(_ process: LocalConfig.Process) {
+        fileprivate init(_ process: LocalConfig.Task) {
             self.executableName = process.executableName
             self.commandLineArguments = process.commandLineArguments
 			self.exitcodeName = process.exitcodeFileName

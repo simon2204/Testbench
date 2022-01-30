@@ -31,10 +31,6 @@ final class TestEnivronment {
         self.sharedResources = config.sharedResources
         
         try setUpTestEnvironmentForSubmission()
-        
-        guard FileManager.default.changeCurrentDirectoryPath(destination.path) else {
-            throw TestEnivronmentError.couldNotChangeCurrentDirectory
-        }
     }
     
     private func setUpTestEnvironmentForSubmission() throws {

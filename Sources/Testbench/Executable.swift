@@ -22,10 +22,10 @@ struct Executable {
         task.executableURL = url
         task.arguments = arguments
         task.standardOutput = pipe
+        task.currentDirectoryURL = url.deletingLastPathComponent()
 		
         let timeNeeded = try Executable.measureExecutionTime {
             try task.run()
-            
             let deadlineHasPassed = task.waitUntilExit(deadline: .now() + deadline)
             
             if deadlineHasPassed { throw RunTimeExeededError(seconds: deadline.seconds) }

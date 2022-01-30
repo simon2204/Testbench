@@ -28,55 +28,40 @@ struct FileUploadController: RouteCollection {
         uploadRoutes.post(use: uploadHandler)
     }
     
-    
-    func uploadHandler(_ request: Request) throws -> EventLoopFuture<TestResult> {
+    func uploadHandler(_ request: Request) async throws -> TestResult {
+        
         let unitTestData = try request.content.decode(UnitTestData.self)
         let directory = submission.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: false)
         
-        let future = writeFilesToSubmissionDirectory(
-            files: unitTestData.files,
-            directory: directory,
-            request: request)
+        try await write(files: unitTestData.files, to: directory, request: request)
         
-        return future.flatMap {
-            let id = Int(unitTestData.assignmentId) ?? 0
-            return performTests(assignmentId: id, submission: directory, request)
-        }
-    }
-    
-    
-    func writeFilesToSubmissionDirectory(
-        files: [File],
-        directory: URL,
-        request: Request) -> EventLoopFuture<Void> {
-
-        let future = files.map { file -> EventLoopFuture<Void> in
-            file.writeFileToDirectory(directory, request: request)
+        guard let assignmentID = Int(unitTestData.assignmentId) else {
+            throw FileUploadError.notAValidID(unitTestData.assignmentId)
         }
         
-        return future.flatten(on: request.eventLoop)
+        return try await performTests(assignmentId: assignmentID, submission: directory, request)
     }
     
-    
-    func performTests(assignmentId: Int, submission: URL, _ request: Request) -> EventLoopFuture<TestResult> {
-        let promise = request.eventLoop.makePromise(of: TestResult.self)
-     
-        DispatchQueue.global(qos: .background).async {
-            let testbench = Testbench(config: config)
-            
-            do {
-                let testResult = try testbench.performTests(
-                    submission: submission,
-                    assignment: assignmentId)
-                promise.succeed(testResult)
-            } catch {
-                promise.fail(error)
+    func write(files: [File], to directory: URL, request: Request) async throws {
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for file in files {
+                group.addTask {
+                    try await file.write(to: directory, request: request)
+                }
             }
+            try await group.waitForAll()
         }
-        
-        return promise.futureResult
+    }
+    
+    func performTests(assignmentId: Int, submission: URL, _ request: Request) async throws -> TestResult {
+        let testbench = Testbench(config: config)
+        return try testbench.performTests(submission: submission, assignment: assignmentId)
     }
 }
 
 extension TestResult: Content {}
+
+enum FileUploadError: Error {
+    case notAValidID(String)
+}

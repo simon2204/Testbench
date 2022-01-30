@@ -13,11 +13,8 @@ struct UnitTestData: Content {
 }
 
 extension File {
-    func writeFileToDirectory(_ directory: URL, request: Request) -> EventLoopFuture<Void> {
-        let path = directory
-            .appendingPathComponent(self.filename)
-            .path
-        
-        return request.fileio.writeFile(self.data, at: path)
+    func write(to directory: URL, request: Request) async throws {
+        let path = directory.appendingPathComponent(filename).path
+        return try await request.fileio.writeFile(data, at: path)
     }
 }

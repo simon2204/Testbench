@@ -28,20 +28,9 @@ struct AvailableTestsController: RouteCollection {
         availableTestsRoute.get(use: getAllAvailableTestNames)
     }
     
-    func getAllAvailableTestNames(_ req: Request) throws -> EventLoopFuture<[Assignment]> {
-        let promise = req.eventLoop.makePromise(of: [Assignment].self)
-        
-        DispatchQueue.global(qos: .background).async {
-            let testbench = Testbench(config: config)
-            do {
-                let assignments = try testbench.availableAssignments()
-                promise.succeed(assignments)
-            } catch {
-                promise.fail(error)
-            }
-        }
-        
-        return promise.futureResult
+    func getAllAvailableTestNames(_ req: Request) async throws -> [Assignment] {
+        let testbench = Testbench(config: config)
+        return try testbench.availableAssignments()
     }
 }
 

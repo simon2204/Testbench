@@ -8,6 +8,9 @@
 import Foundation
 
 final class UnitTest {
+    
+    /// Name der Datei, die nach erfolgreicher Testung erstellt worden ist.
+    /// Enthält die Ergebnisse der einzelnen Testfälle als JSON.
     private static let assertsJsonLog = "ppr_tb_asserts_json.log"
     
     private let config: Config
@@ -24,7 +27,7 @@ final class UnitTest {
     func performTests() throws -> TestResult {
         var result: TestResult
         var runTime: TimeInterval?
-        var errorMsg: String?
+        var errorMsg = ""
         
         do {
             testEnvironment = try TestEnivronment(config: config, submission: submission)
@@ -41,7 +44,7 @@ final class UnitTest {
             runTime: runTime, errorMsg: errorMsg
         )
         
-        if let logfile = try? testEnvironment?.getItem(withName: UnitTest.assertsJsonLog) {
+        if let logfile = try testEnvironment?.getItem(withName: UnitTest.assertsJsonLog) {
             try result.appendEntries(from: logfile)
         }
 

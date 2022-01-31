@@ -28,7 +28,7 @@ public struct TestResult: Codable {
     /// Die Fehlermeldung, welche Aufschluss darüber geben soll,
     /// warum es zu einem vorzeitigen Beenden des Tests gekommen ist.
     /// Enthält `nil`, wenn alle Testfälle durchlaufen werden konnten.
-    public var errorMsg: String?
+    public var errorMsg: String
     
     /// Beginn der Ausführung der Testfälle.
     public var date = Date()

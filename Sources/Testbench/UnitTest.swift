@@ -44,7 +44,7 @@ final class UnitTest {
             runTime: runTime, errorMsg: errorMsg
         )
         
-        if let logfile = try testEnvironment?.getItem(withName: UnitTest.assertsJsonLog) {
+        if let logfile = try? testEnvironment?.getItem(withName: UnitTest.assertsJsonLog) {
             try result.appendEntries(from: logfile)
         }
 

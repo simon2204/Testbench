@@ -37,9 +37,13 @@ struct FileUploadController: RouteCollection {
         
         let unitTestData = try request.content.decode(UnitTestData.self)
         
-        // Erstellt einen Ordner mit einer UUID als Name.
+        // Erstellt einen Ordner mit einer UUID als Namen.
         let directory = submission.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: false)
+        
+        defer {
+            try? FileManager.default.removeItem(at: directory)
+        }
         
         try await write(files: unitTestData.files, to: directory, request: request)
         

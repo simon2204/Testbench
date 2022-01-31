@@ -25,7 +25,7 @@ final class UnitTest {
     }
     
     func performTests() throws -> TestResult {
-        var result: TestResult
+        
         var runTime: TimeInterval?
         var errorMsg = ""
         
@@ -38,12 +38,14 @@ final class UnitTest {
             errorMsg = error.localizedDescription
         }
         
-        result = TestResult(
+        var result = TestResult(
             assignmentName: config.assignmentName,
             totalTestcases: config.totalTestcases,
             runTime: runTime, errorMsg: errorMsg
         )
         
+        // Es muss kein Logfile vorhanden sein, wenn es zuvor eine Error-Nachricht gab.
+        // Deswegen soll kein Error geworfen werden, wenn kein Logfile gefunden wurde.
         if let logfile = try? testEnvironment?.getItem(withName: UnitTest.assertsJsonLog) {
             try result.appendEntries(from: logfile)
         }

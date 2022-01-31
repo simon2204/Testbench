@@ -7,14 +7,12 @@
 
 import Vapor
 
+/// Dateien, die zu einer Praktikumsaufgabe gehören.
 struct UnitTestData: Content {
+    /// ID der Praktikumsaufgabe.
     let assignmentId: String
+    /// Dateien mit der Lösung der Praktikumsaufgabe.
     let files: [File]
 }
 
-extension File {
-    func write(to directory: URL, request: Request) async throws {
-        let path = directory.appendingPathComponent(filename).path
-        return try await request.fileio.writeFile(data, at: path)
-    }
-}
+

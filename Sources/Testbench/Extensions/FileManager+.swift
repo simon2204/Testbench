@@ -27,8 +27,7 @@ extension FileManager {
                 try FileManager.default.removeItem(at: dstItem)
             }
             
-            try FileManager.default.copyItem(at: item,
-                                              to: dstItem)
+            try FileManager.default.copyItem(at: item, to: dstItem)
         }
     }
 }

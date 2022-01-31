@@ -31,7 +31,7 @@ public struct TestResult: Codable {
     public var errorMsg: String?
     
     /// Beginn der Ausführung der Testfälle.
-    public var date: Date = Date()
+    public var date = Date()
     
     /// Enthällt alle Auswertungen, für die Testfälle, die ausgeführt wurden.
     public private(set) var entries: [Entry] = []

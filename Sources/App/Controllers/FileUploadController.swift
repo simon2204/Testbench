@@ -9,6 +9,7 @@ import Vapor
 import Testbench
 
 struct FileUploadController: RouteCollection {
+    
     let app: Application
     
     var testbenchDirectory: URL {
@@ -23,14 +24,20 @@ struct FileUploadController: RouteCollection {
         testbenchDirectory.appendingPathComponent("submission")
     }
     
+    init(app: Application) {
+        self.app = app
+    }
+    
     func boot(routes: RoutesBuilder) throws {
         let uploadRoutes = routes.grouped("api", "upload")
         uploadRoutes.post(use: uploadHandler)
     }
     
-    func uploadHandler(_ request: Request) async throws -> TestResult {
+    private func uploadHandler(_ request: Request) async throws -> TestResult {
         
         let unitTestData = try request.content.decode(UnitTestData.self)
+        
+        // Erstellt einen Ordner mit einer UUID als Name.
         let directory = submission.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: false)
         
@@ -40,10 +47,25 @@ struct FileUploadController: RouteCollection {
             throw FileUploadError.notAValidID(unitTestData.assignmentId)
         }
         
-        return try await performTests(assignmentId: assignmentID, submission: directory, request)
+        return try await performTests(assignmentID: assignmentID, submission: directory)
     }
     
-    func write(files: [File], to directory: URL, request: Request) async throws {
+    
+    /// Führt den Test auf eine Einreichung für eine bestimmte Praktikumsaufgabe aus.
+    /// - Parameters:
+    ///   - assignmentID: ID der Praktikumsaufgabe.
+    ///   - submission: Ordner mit den Dateien, die eingereicht wurden.
+    /// - Returns: Testergebnis.
+    func performTests(assignmentID: Int, submission: URL) async throws -> TestResult {
+        let testbench = Testbench(config: config)
+        return try testbench.performTests(submission: submission, assignment: assignmentID)
+    }
+    
+    /// Schreibt alle Dateien in einen bestimmten Ordner.
+    /// - Parameters:
+    ///   - files: Dateien, die gespeichert werden sollen.
+    ///   - directory: Ordner, in denen die Dateien gespeichert werden sollen.
+    private func write(files: [File], to directory: URL, request: Request) async throws {
         try await withThrowingTaskGroup(of: Void.self) { group in
             for file in files {
                 group.addTask {
@@ -52,11 +74,6 @@ struct FileUploadController: RouteCollection {
             }
             try await group.waitForAll()
         }
-    }
-    
-    func performTests(assignmentId: Int, submission: URL, _ request: Request) async throws -> TestResult {
-        let testbench = Testbench(config: config)
-        return try testbench.performTests(submission: submission, assignment: assignmentId)
     }
 }
 

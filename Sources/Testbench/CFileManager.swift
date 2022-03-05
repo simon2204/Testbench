@@ -24,7 +24,7 @@ struct CFileManager {
     /// damit diese beim Start eines Programmes nicht mehr ausgeführt werden.
     ///
     /// - Parameter url: Ordner in der die main-Funktionen entfernt werden sollen.
-    static func renameMainFunctions(at url: URL) throws {
+    static func removeMainFunctions(at url: URL) throws {
         
         // Liste von URLs zu allen C-Dateien, die sich im Ordner befinden.
         let cFileURLs = try cFiles(at: url)

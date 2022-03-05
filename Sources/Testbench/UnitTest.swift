@@ -114,3 +114,75 @@ final class UnitTest {
             options: executable.buildOptions)
     }
 }
+
+
+//protocol Parser {
+//    associatedtype Entries
+//    func parse(data: Data) throws -> Entries
+//}
+//
+//protocol DataSupplier {
+//    func getData() throws -> Data
+//}
+//
+//protocol Builder {
+//    func build() -> Result<Executer, String>
+//}
+//
+//extension String: Error {
+//    
+//}
+//
+//protocol Executer {
+//    func run() -> (Int, String?)
+//}
+//
+//class TestRunner {
+//    
+//    private let dataSupplier: DataSupplier
+//    
+//    private let parser: Parser
+//    
+//    private let executer: Executer
+//    
+//    
+//    init(dataSupplier: DataSupplier, parser: Parser, executer: Executer) {
+//        self.dataSupplier = dataSupplier
+//        self.parser = parser
+//        self.executer = executer
+//    }
+//    
+//    func performTest() throws -> Parser.Entries {
+//        
+//        // build executable
+//        
+//        let (errorCode, error) = executer.run()
+//        
+//        let data = try dataSupplier.getData()
+//        
+//        return try parser.parse(data: data)
+//    }
+//    
+//    
+//    
+//}
+//
+//class ResultSupplier: DataSupplier {
+//    
+//    private let logfile: URL
+//    
+//    init(logfile: URL) {
+//        self.logfile = logfile
+//    }
+//    
+//    func getData() throws -> Data {
+//        try Data(contentsOf: logfile)
+//    }
+//}
+//
+//class ResultLogDataParser: Parser {
+//    
+//    func parse(data: Data) throws -> [TestResult.Entry] {
+//        
+//    }
+//}

@@ -51,7 +51,7 @@ struct FileUploadController: RouteCollection {
             throw FileUploadError.notAValidID(unitTestData.assignmentId)
         }
         
-        return try await performTests(assignmentID: assignmentID, submission: directory)
+        return try performTests(assignmentID: assignmentID, submission: directory)
     }
     
     
@@ -60,7 +60,7 @@ struct FileUploadController: RouteCollection {
     ///   - assignmentID: ID der Praktikumsaufgabe.
     ///   - submission: Ordner mit den Dateien, die eingereicht wurden.
     /// - Returns: Testergebnis.
-    func performTests(assignmentID: Int, submission: URL) async throws -> TestResult {
+    func performTests(assignmentID: Int, submission: URL) throws -> TestResult {
         let testbench = Testbench(config: config)
         return try testbench.performTests(submission: submission, assignment: assignmentID)
     }

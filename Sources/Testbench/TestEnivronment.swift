@@ -17,7 +17,9 @@ final class TestEnivronment {
     private let sharedResources: URL?
     
     init(config: Config, submission: URL) throws {
-        let workingURL = config.workingDirectory
+        
+        let workingURL = FileManager.default.temporaryDirectory
+        
         self.destination = TestEnivronment.appendingUniquePathComponent(on: workingURL)
         
         self.submission = submission

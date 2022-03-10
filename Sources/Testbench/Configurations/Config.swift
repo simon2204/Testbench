@@ -26,12 +26,10 @@ struct Config {
         localConfig.totalTestcases
     }
     
-    var workingDirectory: URL {
-        URL(fileURLWithPath: globalConfig.workingDirectory)
-    }
-    
     var testSpecURL: URL {
-        URL(fileURLWithPath: globalConfig.testSpecificationDirectory)
+        testConfigURL
+            .deletingLastPathComponent()
+            .appendingPathComponent(globalConfig.testSpecificationDirectory)
     }
     
     var timeout: DispatchTimeInterval {

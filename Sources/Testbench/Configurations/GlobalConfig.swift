@@ -9,9 +9,6 @@
 ///
 /// Mit Hilfe dieses structs wird die globale Konfigurationsdatei dekodiert.
 struct GlobalConfig: Codable {
-    /// Ordner, in dem die Testung erfolgt.
-    let workingDirectory: String
-    
     /// Ordner, in dem die Testdateien und Konfiguration liegen.
     let testSpecificationDirectory: String
     
